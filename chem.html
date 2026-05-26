@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHEM∞ — Laboratorio Químico Universal</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050810;--bg2:#080d1a;--bg3:#0c1428;
+  --panel:rgba(8,16,35,0.95);--border:rgba(0,200,255,0.15);--border2:rgba(0,200,255,0.35);
+  --text:#e0eeff;--muted:#5a7a9a;
+  --acc:#00d4ff;--acc2:#ff6b35;--acc3:#7fff00;--acc4:#bf5fff;--acc5:#ffcc00;
+  --glow:0 0 20px rgba(0,212,255,0.3);
+  --fh:'Orbitron',monospace;--fm:'Space Mono',monospace;--fb:'Exo 2',sans-serif;
+  --sw:256px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 600px 400px at 20% 20%,rgba(0,100,255,0.06),transparent 70%),radial-gradient(ellipse 500px 300px at 80% 70%,rgba(0,212,255,0.04),transparent 70%);pointer-events:none;z-index:0}
+#app{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* SIDEBAR */
+#sb{width:var(--sw);min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);position:fixed;left:0;top:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+#sb::-webkit-scrollbar{width:3px}
+#sb::-webkit-scrollbar-thumb{background:var(--acc);border-radius:2px}
+.sb-logo{padding:22px 20px 14px;border-bottom:1px solid var(--border)}
+.sb-logo-t{font-family:var(--fh);font-size:1.4rem;font-weight:900;color:var(--acc);letter-spacing:4px;text-shadow:var(--glow)}
+.sb-logo-s{font-family:var(--fm);font-size:0.52rem;color:var(--muted);letter-spacing:3px;margin-top:3px}
+.sb-sec{padding:10px 0 3px 20px;font-family:var(--fm);font-size:0.55rem;color:var(--muted);letter-spacing:3px}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;font-family:var(--fb);font-size:0.82rem;color:var(--muted);border-left:3px solid transparent;transition:all 0.2s;user-select:none}
+.ni:hover{color:var(--text);background:rgba(0,212,255,0.04)}
+.ni.active{color:var(--acc);border-left-color:var(--acc);background:rgba(0,212,255,0.07);font-weight:600}
+.ni-ic{font-size:1rem;width:20px;text-align:center}
+
+/* MAIN */
+#main{margin-left:var(--sw);flex:1;min-height:100vh}
+#topbar{height:52px;background:rgba(8,13,26,0.97);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;position:sticky;top:0;z-index:50;backdrop-filter:blur(10px)}
+#ptitle{font-family:var(--fh);font-size:0.75rem;letter-spacing:4px;color:var(--acc)}
+.bdg{margin-left:auto;font-family:var(--fm);font-size:0.58rem;padding:2px 8px;border:1px solid var(--border2);border-radius:2px;color:var(--muted);letter-spacing:2px}
+
+/* PAGES */
+.page{display:none;padding:26px 30px;max-width:1400px}
+.page.active{display:block}
+
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:22px;margin-bottom:18px}
+.ctitle{font-family:var(--fh);font-size:0.72rem;letter-spacing:4px;color:var(--acc);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+
+/* INPUTS */
+input[type=text],input[type=number],select,textarea{background:rgba(0,0,0,0.4);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-family:var(--fm);font-size:0.8rem;border-radius:4px;width:100%;outline:none;transition:border-color 0.2s,box-shadow 0.2s}
+input:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 2px rgba(0,212,255,0.1)}
+select option{background:#0a1020;color:var(--text)}
+.lbl{font-family:var(--fm);font-size:0.62rem;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:4px;margin-top:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:transparent;border:1px solid var(--acc);color:var(--acc);padding:10px 20px;font-family:var(--fh);font-size:0.62rem;letter-spacing:3px;border-radius:4px;cursor:pointer;transition:all 0.2s;margin-top:12px}
+.btn:hover{background:rgba(0,212,255,0.1);box-shadow:var(--glow)}
+.btn-o{border-color:var(--acc2);color:var(--acc2)}.btn-o:hover{background:rgba(255,107,53,0.1)}
+.btn-g{border-color:var(--acc3);color:var(--acc3)}.btn-g:hover{background:rgba(127,255,0,0.08)}
+
+/* RESULT BOX */
+.rb{background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:14px;font-family:var(--fm);font-size:0.76rem;line-height:1.7;margin-top:12px;min-height:56px;white-space:pre-wrap;overflow-x:auto;color:var(--text)}
+
+/* EXAMPLE BUTTONS */
+.exs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ex{font-family:var(--fm);font-size:0.66rem;padding:4px 9px;background:rgba(0,212,255,0.04);border:1px solid var(--border);color:var(--muted);border-radius:3px;cursor:pointer;transition:all 0.15s}
+.ex:hover{color:var(--acc);border-color:var(--acc);background:rgba(0,212,255,0.09)}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-family:var(--fm);font-size:0.72rem;margin-top:10px}
+.tbl th{padding:8px 11px;text-align:left;border-bottom:1px solid var(--border);color:var(--acc);font-weight:700;letter-spacing:1px}
+.tbl td{padding:7px 11px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.tbl tr:hover td{background:rgba(0,212,255,0.025)}
+
+/* TABS */
+.tbrow{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:18px;overflow-x:auto;flex-wrap:nowrap}
+.tb{font-family:var(--fh);font-size:0.58rem;letter-spacing:2px;padding:10px 16px;border:none;background:none;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.tb.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tb:hover:not(.active){color:var(--text)}
+.tc{display:none}.tc.active{display:block}
+
+/* PERIODIC TABLE */
+.ptw{overflow-x:auto;padding-bottom:6px}
+.ptg{display:grid;grid-template-columns:repeat(18,minmax(42px,54px));gap:3px;width:max-content}
+.el{position:relative;padding:4px 3px 3px;border:1px solid rgba(255,255,255,0.06);border-radius:3px;cursor:pointer;transition:all 0.15s;text-align:center;min-height:50px}
+.el:hover{transform:scale(1.13);z-index:10;box-shadow:0 0 14px rgba(0,212,255,0.5);border-color:var(--acc)}
+.el .en{font-size:0.52rem;color:rgba(255,255,255,0.35);line-height:1}
+.el .es{font-family:var(--fh);font-size:0.9rem;font-weight:700;line-height:1.1}
+.el .ename{font-size:0.42rem;color:rgba(255,255,255,0.5);line-height:1;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.el .em{font-family:var(--fm);font-size:0.4rem;color:rgba(255,255,255,0.35);margin-top:1px}
+.c-alk{background:rgba(255,71,87,0.22)}.c-ake{background:rgba(255,107,53,0.2)}.c-tra{background:rgba(55,66,250,0.2)}.c-pos{background:rgba(46,213,115,0.16)}.c-met{background:rgba(255,165,2,0.2)}.c-non{background:rgba(30,144,255,0.2)}.c-hal{background:rgba(162,155,254,0.2)}.c-nob{background:rgba(253,121,168,0.18)}.c-lan{background:rgba(0,206,201,0.18)}.c-act{background:rgba(108,92,231,0.18)}.c-unk{background:rgba(90,90,90,0.18)}
+#edet{display:none;margin-top:14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:18px}
+.edg{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start}
+.esym{font-family:var(--fh);font-size:3.5rem;font-weight:900;color:var(--acc);text-shadow:var(--glow);line-height:1;text-align:center;min-width:100px}
+.eprops{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.ep{font-family:var(--fm);font-size:0.66rem;padding:3px 9px;background:rgba(0,212,255,0.07);border:1px solid var(--border);border-radius:3px}
+.epk{color:var(--muted)}.epv{color:var(--acc3);margin-left:4px}
+.lgnd{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.li{display:flex;align-items:center;gap:4px;font-size:0.64rem;font-family:var(--fm);color:var(--muted)}
+.ld{width:9px;height:9px;border-radius:2px}
+
+/* CANVAS */
+canvas{border:1px solid var(--border);border-radius:6px;background:#030609;display:block;width:100%;max-width:600px;margin-top:12px}
+
+@media(max-width:700px){:root{--sw:0px}#sb{transform:translateX(-100%)}#main{margin-left:0}.g3,.g4{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app">
+<nav id="sb">
+  <div class="sb-logo">
+    <div class="sb-logo-t">CHEM∞</div>
+    <div class="sb-logo-s">LABORATORIO UNIVERSAL</div>
+  </div>
+  <div class="sb-sec">ESTRUCTURA</div>
+  <div class="ni active" onclick="gp('tabla')"><span class="ni-ic">◈</span>Tabla Periódica</div>
+  <div class="ni" onclick="gp('config')"><span class="ni-ic">⚛</span>Config. Electrónica</div>
+  <div class="ni" onclick="gp('nom')"><span class="ni-ic">📛</span>Nomenclatura</div>
+  <div class="sb-sec">REACCIONES</div>
+  <div class="ni" onclick="gp('redox')"><span class="ni-ic">⚡</span>Balanceo Redox</div>
+  <div class="ni" onclick="gp('estoq')"><span class="ni-ic">⚗</span>Estequiometría</div>
+  <div class="ni" onclick="gp('masas')"><span class="ni-ic">🧮</span>Masas Molares</div>
+  <div class="ni" onclick="gp('rend')"><span class="ni-ic">📊</span>Rendimiento Rxn.</div>
+  <div class="sb-sec">FISICOQUÍMICA</div>
+  <div class="ni" onclick="gp('gases')"><span class="ni-ic">💨</span>Leyes de Gases</div>
+  <div class="ni" onclick="gp('termo')"><span class="ni-ic">🌡️</span>Termoquímica</div>
+  <div class="ni" onclick="gp('cin')"><span class="ni-ic">⏱</span>Cinética Química</div>
+  <div class="ni" onclick="gp('eq')"><span class="ni-ic">⚖</span>Equilibrio Químico</div>
+  <div class="sb-sec">SOLUCIONES</div>
+  <div class="ni" onclick="gp('ph')"><span class="ni-ic">🧪</span>pH &amp; Ácido-Base</div>
+  <div class="ni" onclick="gp('sol')"><span class="ni-ic">💧</span>Soluciones</div>
+  <div class="ni" onclick="gp('ksp')"><span class="ni-ic">📋</span>Solubilidad &amp; Ksp</div>
+  <div class="ni" onclick="gp('colig')"><span class="ni-ic">🌊</span>Prop. Coligativas</div>
+  <div class="sb-sec">ELECTROQUÍMICA</div>
+  <div class="ni" onclick="gp('electroq')"><span class="ni-ic">🔋</span>Electroquímica</div>
+  <div class="ni" onclick="gp('corr')"><span class="ni-ic">🔩</span>Corrosión</div>
+  <div class="sb-sec">ORGÁNICA</div>
+  <div class="ni" onclick="gp('grupos')"><span class="ni-ic">🔗</span>Grupos Funcionales</div>
+  <div class="ni" onclick="gp('isomeria')"><span class="ni-ic">🔄</span>Isomería</div>
+  <div class="ni" onclick="gp('orgrxn')"><span class="ni-ic">⚗</span>Rxn. Orgánicas</div>
+  <div class="sb-sec">HERRAMIENTAS</div>
+  <div class="ni" onclick="gp('conv')"><span class="ni-ic">🔁</span>Conversiones</div>
+  <div class="ni" onclick="gp('ctes')"><span class="ni-ic">📐</span>Constantes</div>
+  <div class="ni" onclick="gp('form')"><span class="ni-ic">📄</span>Formulario</div>
+</nav>
+<div id="main">
+  <div id="topbar">
+    <div id="ptitle">TABLA PERIÓDICA</div>
+    <div class="bdg">CHEM∞ v3.0</div>
+  </div>
+  <div id="content">
+<!-- TABLA PERIÓDICA -->
+<div class="page active" id="p-tabla">
+<div class="card"><div class="ctitle">◈ TABLA PERIÓDICA INTERACTIVA</div>
+<div class="lgnd" id="lgnd"></div>
+<div class="ptw"><div class="ptg" id="ptg"></div></div>
+<div id="edet"></div>
+</div></div>
+
+<!-- CONFIG ELECTRÓNICA -->
+<div class="page" id="p-config">
+<div class="card"><div class="ctitle">⚛ CONFIGURACIÓN ELECTRÓNICA</div>
+<label class="lbl">ELEMENTO (símbolo, nombre o Z)</label>
+<input type="text" id="cfg-in" placeholder="Ej: Fe, 26, Oro, Cl">
+<div class="exs">
+  <span class="ex" onclick="doConf('H')">H</span><span class="ex" onclick="doConf('C')">C</span>
+  <span class="ex" onclick="doConf('Fe')">Fe</span><span class="ex" onclick="doConf('Au')">Au</span>
+  <span class="ex" onclick="doConf('Cr')">Cr</span><span class="ex" onclick="doConf('Cu')">Cu</span>
+  <span class="ex" onclick="doConf('U')">U</span><span class="ex" onclick="doConf('Pb')">Pb</span>
+</div>
+<label class="lbl">ION (carga)</label>
+<select id="cfg-ch">
+  <option value="0">Neutro (0)</option><option value="-1">-1</option><option value="-2">-2</option>
+  <option value="-3">-3</option><option value="1">+1</option><option value="2">+2</option>
+  <option value="3">+3</option><option value="4">+4</option>
+</select>
+<button class="btn" onclick="calcConf()">⚛ CALCULAR</button>
+<div class="rb" id="cfg-r">Ingresa un elemento...</div>
+</div></div>
+
+<!-- NOMENCLATURA -->
+<div class="page" id="p-nom">
+<div class="card"><div class="ctitle">📛 NOMENCLATURA QUÍMICA</div>
+<div class="tbrow">
+  <button class="tb active" onclick="st(this,'nom','bin')">BINARIOS</button>
+  <button class="tb" onclick="st(this,'nom','ter')">TERNARIOS</button>
+  <button class="tb" onclick="st(this,'nom','org')">ORGÁNICOS</button>
+</div>
+<div class="tc active" id="nom-bin">
+  <label class="lbl">FÓRMULA BINARIA</label>
+  <input type="text" id="nom-in" placeholder="Ej: NaCl, Fe2O3, H2S, P2O5">
+  <div class="exs">
+    <span class="ex" onclick="lnom('NaCl')">NaCl</span><span class="ex" onclick="lnom('Fe2O3')">Fe₂O₃</span>
+    <span class="ex" onclick="lnom('H2S')">H₂S</span><span class="ex" onclick="lnom('MgO')">MgO</span>
+    <span class="ex" onclick="lnom('CrCl3')">CrCl₃</span><span class="ex" onclick="lnom('P2O5')">P₂O₅</span>
+    <span class="ex" onclick="lnom('HCl')">HCl</span><span class="ex" onclick="lnom('N2O5')">N₂O₅</span>
+  </div>
+  <button class="btn" onclick="calcNom()">📛 NOMENCLAR</button>
+  <div class="rb" id="nom-r">Resultado aquí...</div>
+</div>
+<div class="tc" id="nom-ter">
+<table class="tbl"><tr><th>Compuesto</th><th>Fórmula</th><th>Nombre</th></tr>
+<tr><td>Ácido sulfúrico</td><td>H₂SO₄</td><td>Tetraoxosulfato(VI) de hidrógeno</td></tr>
+<tr><td>Ácido nítrico</td><td>HNO₃</td><td>Trioxonitrato(V) de hidrógeno</td></tr>
+<tr><td>Ácido fosfórico</td><td>H₃PO₄</td><td>Tetraoxofosfato(V) de hidrógeno</td></tr>
+<tr><td>Hidróxido de sodio</td><td>NaOH</td><td>Hidróxido de sodio</td></tr>
+<tr><td>Hidróxido cálcico</td><td>Ca(OH)₂</td><td>Hidróxido de calcio</td></tr>
+<tr><td>Sulfato ferroso</td><td>FeSO₄</td><td>Sulfato de hierro(II)</td></tr>
+<tr><td>Sulfato férrico</td><td>Fe₂(SO₄)₃</td><td>Sulfato de hierro(III)</td></tr>
+<tr><td>Permanganato de K</td><td>KMnO₄</td><td>Tetraoxomanganato(VII) de potasio</td></tr>
+<tr><td>Dicromato de K</td><td>K₂Cr₂O₇</td><td>Heptaoxodicromato(VI) de potasio</td></tr>
+<tr><td>Carbonato de sodio</td><td>Na₂CO₃</td><td>Carbonato de disodio</td></tr>
+</table></div>
+<div class="tc" id="nom-org">
+<table class="tbl"><tr><th>n°C</th><th>Prefijo</th><th>Alcano</th><th>Alqueno</th><th>Alquino</th></tr>
+<tr><td>1</td><td>met-</td><td>Metano CH₄</td><td>—</td><td>—</td></tr>
+<tr><td>2</td><td>et-</td><td>Etano C₂H₆</td><td>Eteno C₂H₄</td><td>Etino C₂H₂</td></tr>
+<tr><td>3</td><td>prop-</td><td>Propano C₃H₈</td><td>Propeno C₃H₆</td><td>Propino C₃H₄</td></tr>
+<tr><td>4</td><td>but-</td><td>Butano C₄H₁₀</td><td>Buteno C₄H₈</td><td>Butino C₄H₆</td></tr>
+<tr><td>5</td><td>pent-</td><td>Pentano C₅H₁₂</td><td>Penteno C₅H₁₀</td><td>Pentino C₅H₈</td></tr>
+<tr><td>6</td><td>hex-</td><td>Hexano C₆H₁₄</td><td>Hexeno C₆H₁₂</td><td>Hexino C₆H₁₀</td></tr>
+<tr><td>7</td><td>hept-</td><td>Heptano C₇H₁₆</td><td>Hepteno</td><td>Heptino</td></tr>
+<tr><td>8</td><td>oct-</td><td>Octano C₈H₁₈</td><td>Octeno</td><td>Octino</td></tr>
+<tr><td>10</td><td>dec-</td><td>Decano C₁₀H₂₂</td><td>—</td><td>—</td></tr>
+</table>
+<div style="margin-top:12px;font-size:0.74rem;color:var(--muted)">Fórmulas: Alcanos CₙH₂ₙ₊₂ | Alquenos CₙH₂ₙ | Alquinos CₙH₂ₙ₋₂ | Benceno C₆H₆</div>
+</div>
+</div></div>
+
+<!-- REDOX -->
+<div class="page" id="p-redox">
+<div class="card"><div class="ctitle">⚡ BALANCEO REDOX — MÉTODO ALGEBRAICO</div>
+<label class="lbl">ECUACIÓN (usa -> como flecha)</label>
+<input type="text" id="rdx-in" placeholder="Ej: KMnO4 + HCl -> KCl + MnCl2 + Cl2 + H2O">
+<div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
+  <span style="font-size:0.62rem;color:var(--muted)">MEDIO:</span>
+  <span class="ex active" id="rm-ac" onclick="setMedio('ac')">ÁCIDO</span>
+  <span class="ex" id="rm-ba" onclick="setMedio('ba')">BÁSICO</span>
+  <span class="ex" id="rm-ne" onclick="setMedio('ne')">NEUTRO</span>
+</div>
+<div class="exs">
+  <span class="ex" onclick="lrdx('KMnO4 + HCl -> KCl + MnCl2 + Cl2 + H2O')">KMnO₄+HCl</span>
+  <span class="ex" onclick="lrdx('Fe + H2SO4 -> FeSO4 + H2')">Fe+H₂SO₄</span>
+  <span class="ex" onclick="lrdx('K2Cr2O7 + HCl -> KCl + CrCl3 + Cl2 + H2O')">K₂Cr₂O₇+HCl</span>
+  <span class="ex" onclick="lrdx('KMnO4 + H2O2 + H2SO4 -> MnSO4 + O2 + K2SO4 + H2O')">KMnO₄+H₂O₂</span>
+  <span class="ex" onclick="lrdx('Zn + HNO3 -> Zn(NO3)2 + NH4NO3 + H2O')">Zn+HNO₃</span>
+  <span class="ex" onclick="lrdx('MnO4- + Fe2+ + H+ -> Mn2+ + Fe3+ + H2O')">MnO₄⁻+Fe²⁺</span>
+</div>
+<button class="btn" onclick="balancear()">⚡ BALANCEAR</button>
+<div class="rb" id="rdx-r">Los pasos aparecerán aquí...</div>
+</div></div>
+
+<!-- ESTEQUIOMETRÍA -->
+<div class="page" id="p-estoq">
+<div class="card"><div class="ctitle">⚗ ESTEQUIOMETRÍA</div>
+<div class="g2" style="align-items:end">
+  <div><label class="lbl">ECUACIÓN BALANCEADA</label>
+  <input type="text" id="esq-in" placeholder="Ej: 2H2 + O2 -> 2H2O"></div>
+  <button class="btn" style="margin:0;height:42px" onclick="parseEsq()">⚙ ANALIZAR</button>
+</div>
+<div class="exs">
+  <span class="ex" onclick="lesq('2H2 + O2 -> 2H2O')">H₂+O₂</span>
+  <span class="ex" onclick="lesq('N2 + 3H2 -> 2NH3')">Haber</span>
+  <span class="ex" onclick="lesq('CH4 + 2O2 -> CO2 + 2H2O')">CH₄ comb.</span>
+  <span class="ex" onclick="lesq('Fe2O3 + 3CO -> 2Fe + 3CO2')">Fe₂O₃+CO</span>
+  <span class="ex" onclick="lesq('CaCO3 -> CaO + CO2')">CaCO₃</span>
+  <span class="ex" onclick="lesq('2Al + 3H2SO4 -> Al2(SO4)3 + 3H2')">Al+H₂SO₄</span>
+</div>
+<div id="esq-sp" style="display:none;margin-top:14px">
+  <div style="font-size:0.62rem;color:var(--acc);letter-spacing:2px;margin-bottom:6px">ESPECIE CONOCIDA:</div>
+  <div id="esq-cards" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px"></div>
+  <div class="g3">
+    <div><label class="lbl">CANTIDAD</label><input type="number" id="esq-cant" placeholder="Ej: 10" min="0" step="any"></div>
+    <div><label class="lbl">UNIDAD</label>
+    <select id="esq-unit">
+      <option value="g">gramos (g)</option><option value="mol">moles (mol)</option>
+      <option value="kg">kg</option><option value="mg">mg</option>
+      <option value="L">litros STP</option><option value="molec">moléculas</option>
+    </select></div>
+    <div style="display:flex;align-items:flex-end"><button class="btn" style="width:100%;margin:0" onclick="calcEsq()">▶ CALCULAR</button></div>
+  </div>
+</div>
+<div class="rb" id="esq-r">Analiza una ecuación primero...</div>
+</div></div>
+
+<!-- MASAS MOLARES -->
+<div class="page" id="p-masas">
+<div class="card"><div class="ctitle">🧮 MASAS MOLARES</div>
+<label class="lbl">FÓRMULA MOLECULAR</label>
+<input type="text" id="mm-in" placeholder="Ej: H2SO4, Ca3(PO4)2, C6H12O6" onkeydown="if(event.key==='Enter')calcMM()">
+<div class="exs">
+  <span class="ex" onclick="lmm('H2O')">H₂O</span><span class="ex" onclick="lmm('H2SO4')">H₂SO₄</span>
+  <span class="ex" onclick="lmm('Ca3(PO4)2')">Ca₃(PO₄)₂</span><span class="ex" onclick="lmm('C6H12O6')">Glucosa</span>
+  <span class="ex" onclick="lmm('KMnO4')">KMnO₄</span><span class="ex" onclick="lmm('Fe2(SO4)3')">Fe₂(SO₄)₃</span>
+  <span class="ex" onclick="lmm('NaHCO3')">NaHCO₃</span><span class="ex" onclick="lmm('Al2(SO4)3')">Al₂(SO₄)₃</span>
+</div>
+<button class="btn" onclick="calcMM()">🧮 CALCULAR</button>
+<div class="rb" id="mm-r">Resultado aquí...</div>
+</div></div>
+
+<!-- RENDIMIENTO -->
+<div class="page" id="p-rend">
+<div class="card"><div class="ctitle">📊 RENDIMIENTO &amp; REACTIVO LIMITANTE</div>
+<label class="lbl">ECUACIÓN BALANCEADA</label>
+<input type="text" id="rend-eq" placeholder="Ej: 2H2 + O2 -> 2H2O">
+<div id="rend-ri" style="margin-top:12px"></div>
+<div class="g2" style="margin-top:8px">
+  <div><label class="lbl">PRODUCTO A ANALIZAR</label><select id="rend-ps"></select></div>
+  <div><label class="lbl">MASA EXPERIMENTAL (g)</label><input type="number" id="rend-exp" placeholder="Opcional" min="0" step="any"></div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button class="btn" onclick="parseRend()">⚙ ANALIZAR</button>
+  <button class="btn btn-o" onclick="calcRend()">📊 CALCULAR</button>
+</div>
+<div class="rb" id="rend-r">Analiza la ecuación primero...</div>
+</div></div>
+
+<!-- GASES -->
+<div class="page" id="p-gases">
+<div class="card"><div class="ctitle">💨 LEYES DE GASES</div>
+<div class="tbrow">
+  <button class="tb active" onclick="st(this,'gas','ideal')">GAS IDEAL</button>
+  <button class="tb" onclick="st(this,'gas','boyle')">BOYLE</button>
+  <button class="tb" onclick="st(this,'gas','charles')">CHARLES</button>
+  <button class="tb" onclick="st(this,'gas','gay')">GAY-LUSSAC</button>
+  <button class="tb" onclick="st(this,'gas','comb')">COMBINADA</button>
+  <button class="tb" onclick="st(this,'gas','vdw')">VAN DER WAALS</button>
+  <button class="tb" onclick="st(this,'gas','dalton')">DALTON</button>
+</div>
+<div class="tc active" id="gas-ideal">
+  <div style="color:var(--acc3);font-family:var(--fm);font-size:0.78rem;margin-bottom:10px">PV = nRT &nbsp;|&nbsp; R = 0.082057 L·atm/mol·K</div>
+  <p style="font-size:0.72rem;color:var(--muted);margin-bottom:8px">Deja en blanco la variable a calcular</p>
+  <div class="g4">
+    <div><label class="lbl">P (atm)</label><input type="number" id="gi-P" step="any"></div>
+    <div><label class="lbl">V (L)</label><input type="number" id="gi-V" step="any"></div>
+    <div><label class="lbl">n (mol)</label><input type="number" id="gi-n" step="any"></div>
+    <div><label class="lbl">T (°C)</label><input type="number" id="gi-T" step="any"></div>
+  </div>
+  <button class="btn" onclick="calcGI()">💨 CALCULAR</button>
+  <div class="rb" id="gi-r"></div>
+</div>
+<div class="tc" id="gas-boyle">
+  <div style="color:var(--acc3);font-family:var(--fm);font-size:0.78rem;margin-bottom:10px">P₁V₁ = P₂V₂</div>
+  <div class="g4">
+    <div><label class="lbl">P₁ (atm)</label><input type="number" id="by-P1" step="any"></div>
+    <div><label class="lbl">V₁ (L)</label><input type="number" id="by-V1" step="any"></div>
+    <div><label class="lbl">P₂ (atm)</label><input type="number" id="by-P2" step="any"></div>
+    <div><label class="lbl">V₂ (L)</label><input type="number" id="by-V2" step="any" style="color:var(--acc3)" readonly></div>
+  </div>
+  <button class="btn" onclick="document.getElementById('by-V2').value=(+document.getElementById('by-P1').value * +document.getElementById('by-V1').value / +document.getElementById('by-P2').value).toFixed(5)">💨 CALCULAR V₂</button>
+</div>
+<div class="tc" id="gas-charles">
+  <div style="color:var(--acc3);font-family:var(--fm);font-size:0.78rem;margin-bottom:10px">V₁/T₁ = V₂/T₂</div>
+  <div class="g4">
+    <div><label class="lbl">V₁ (L)</label><input type="number" id="ch-V1" step="any"></div>
+    <div><label class="lbl">T₁ (°C)</label><input type="number" id="ch-T1" step="any"></div>
+    <div><label class="lbl">T₂ (°C)</label><input type="number" id="ch-T2" step="any"></div>
+    <div><label class="lbl">V₂ (L)</label><input type="number" id="ch-V2" step="any" style="color:var(--acc3)" readonly></div>
+  </div>
+  <button class="btn" onclick="calcCharles()">💨 CALCULAR V₂</button>
+</div>
+<div class="tc" id="gas-gay">
+  <div style="color:var(--acc3);font-family:var(--fm);font-size:0.78rem;margin-bottom:10px">P₁/T₁ = P₂/T₂</div>
+  <div class="g4">
+    <div><label class="lbl">P₁ (atm)</label><input type="number" id="gl-P1" step="any"></div>
+    <div><label class="lbl">T₁ (°C)</label><input type="number" id="gl-T1" step="any"></div>
+    <div><label class="lbl">T₂ (°C)</label><input type="number" id="gl-T2" step="any"></div>
+    <div><label class="lbl">P₂ (atm)</label><input type="number" id="gl-P2" step="any" style="color:var(--acc3)" readonly></div>
+  </div>
+  <button class="btn" onclick="calcGL()">💨 CALCULAR P₂</button>
+</div>
+<div class="tc" id="gas-comb">
+  <div style="color:var(--acc3);font-family:var(--fm);font-size:0.78rem;margin-bottom:10px">P₁V₁/T₁ = P₂V₂/T₂</div>
+  <div class="g3">
+    <div><label class="lbl">P₁ (atm)</label><input type="number" id="cb-P1" step="any"></div>
+    <div><label class="lbl">V₁ (L)</label><input type="number" id="cb-V1" step="any"></div>
+    <div><label class="lbl">T₁ (°C)</label><input type="number" id="cb-T1" step="any"></div>
+    <div><label class="lbl">P₂ (atm)</label><input type="number" id="cb-P2" step="any"></div>
+    <div><label class="lbl">T₂ (°C)</label><input type="number" id="cb-T2" step="any"></div>
+    <div><label class="lbl">V₂ (L)</label><input type="number" id="cb-V2" step="any" style="color:var(--acc3)" readonly></div>
+  </div>
+  <button class="btn" onclick="calcComb()">💨 CALCULAR V₂</button>
+</div>
+<div class="tc" id="gas-vdw">
+  <div style="color:var(--acc3);font-family:var(--fm);font-size:0.78rem;margin-bottom:10px">(P + an²/V²)(V − nb) = nRT</div>
+  <div class="g2">
+    <div><label class="lbl">GAS</label>
+    <select id="vdw-g" onchange="setVdw()">
+      <option value="0.244,0.02661">Helio (He)</option><option value="1.39,0.03913">Argón (Ar)</option>
+      <option value="1.36,0.03183">Nitrógeno (N₂)</option><option value="1.382,0.03186">Oxígeno (O₂)</option>
+      <option value="0.2476,0.02661">Hidrógeno (H₂)</option><option value="3.658,0.04267">CO₂</option>
+      <option value="4.225,0.03707">NH₃</option><option value="5.537,0.03049">Cl₂</option>
+    </select></div>
+    <div class="g2">
+      <div><label class="lbl">a (L²·atm/mol²)</label><input type="number" id="vdw-a" step="any"></div>
+      <div><label class="lbl">b (L/mol)</label><input type="number" id="vdw-b" step="any"></div>
+    </div>
+  </div>
+  <div class="g4">
+    <div><label class="lbl">n (mol)</label><input type="number" id="vdw-n" step="any"></div>
+    <div><label class="lbl">T (°C)</label><input type="number" id="vdw-T" step="any"></div>
+    <div><label class="lbl">V (L)</label><input type="number" id="vdw-V" step="any"></div>
+    <div><label class="lbl">P (atm)</label><input type="number" id="vdw-P" step="any" style="color:var(--acc3)" readonly></div>
+  </div>
+  <button class="btn" onclick="calcVdw()">💨 CALCULAR P</button>
+</div>
+<div class="tc" id="gas-dalton">
+  <div style="color:var(--acc3);font-family:var(--fm);font-size:0.78rem;margin-bottom:10px">Pₜ = Σ Pᵢ &nbsp;|&nbsp; Pᵢ = xᵢ · Pₜ</div>
+  <div class="g3">
+    <div><label class="lbl">n gas 1 (mol)</label><input type="number" id="d-n1" step="any" min="0" value="0"></div>
+    <div><label class="lbl">n gas 2 (mol)</label><input type="number" id="d-n2" step="any" min="0" value="0"></div>
+    <div><label class="lbl">n gas 3 (mol)</label><input type="number" id="d-n3" step="any" min="0" value="0"></div>
+    <div><label class="lbl">n gas 4 (mol)</label><input type="number" id="d-n4" step="any" min="0" value="0"></div>
+    <div><label class="lbl">n gas 5 (mol)</label><input type="number" id="d-n5" step="any" min="0" value="0"></div>
+    <div><label class="lbl">P total (atm)</label><input type="number" id="d-Pt" step="any" value="1"></div>
+  </div>
+  <button class="btn" onclick="calcDalton()">💨 CALCULAR</button>
+  <div class="rb" id="d-r"></div>
+</div>
+</div></div>
+<!-- TERMOQUÍMICA -->
+<div class="page" id="p-termo">
+<div class="card"><div class="ctitle">🌡️ TERMOQUÍMICA</div>
+<div class="tbrow">
+  <button class="tb active" onclick="st(this,'tq','cal')">CALORIMETRÍA</button>
+  <button class="tb" onclick="st(this,'tq','hess')">LEY DE HESS</button>
+  <button class="tb" onclick="st(this,'tq','gibbs')">GIBBS &amp; ENTROPÍA</button>
+  <button class="tb" onclick="st(this,'tq','tdh')">TABLA ΔH°f</button>
+</div>
+<div class="tc active" id="tq-cal">
+  <div style="color:var(--acc3);font-family:var(--fm);font-size:0.76rem;margin-bottom:8px">Q = m·c·ΔT</div>
+  <div class="g3">
+    <div><label class="lbl">m (g)</label><input type="number" id="tq-m" step="any"></div>
+    <div><label class="lbl">c — Cp (J/g·°C)</label>
+    <select id="tq-cs" onchange="document.getElementById('tq-c').value=this.value.includes('custom')?'':this.value">
+      <option value="4.184">Agua (4.184)</option><option value="0.385">Cobre (0.385)</option>
+      <option value="0.449">Hierro (0.449)</option><option value="0.897">Aluminio (0.897)</option>
+      <option value="0.128">Oro (0.128)</option><option value="0.233">Plomo (0.233)</option>
+      <option value="2.09">Hielo (2.09)</option>
+    </select></div>
+    <div><label class="lbl">c personalizado</label><input type="number" id="tq-c" step="any" placeholder="o escribe aquí"></div>
+    <div><label class="lbl">T_inicial (°C)</label><input type="number" id="tq-Ti" step="any"></div>
+    <div><label class="lbl">T_final (°C)</label><input type="number" id="tq-Tf" step="any"></div>
+    <div><label class="lbl">Q (J)</label><input type="number" id="tq-Q" style="color:var(--acc3)" readonly></div>
+  </div>
+  <button class="btn" onclick="calcCal()">🌡️ CALCULAR Q</button>
+</div>
+<div class="tc" id="tq-hess">
+  <div style="font-size:0.74rem;color:var(--muted);margin-bottom:10px">ΔH°rxn = Σ ΔH°f(prod) − Σ ΔH°f(react)</div>
+  <label class="lbl">ECUACIÓN</label>
+  <input type="text" id="hess-in" placeholder="Ej: CH4 + 2O2 -> CO2 + 2H2O">
+  <div class="exs">
+    <span class="ex" onclick="lhess('CH4 + 2O2 -> CO2 + 2H2O')">CH₄ comb.</span>
+    <span class="ex" onclick="lhess('2H2 + O2 -> 2H2O')">Form. H₂O</span>
+    <span class="ex" onclick="lhess('N2 + 3H2 -> 2NH3')">Haber</span>
+    <span class="ex" onclick="lhess('CaCO3 -> CaO + CO2')">Descomp. CaCO₃</span>
+  </div>
+  <button class="btn" onclick="calcHess()">🌡️ CALCULAR ΔH°</button>
+  <div class="rb" id="hess-r"></div>
+</div>
+<div class="tc" id="tq-gibbs">
+  <div style="color:var(--acc3);font-family:var(--fm);font-size:0.76rem;margin-bottom:8px">ΔG° = ΔH° − T·ΔS° &nbsp;|&nbsp; ΔG° = −RT·lnK</div>
+  <div class="g3">
+    <div><label class="lbl">ΔH° (kJ/mol)</label><input type="number" id="gb-dH" step="any"></div>
+    <div><label class="lbl">ΔS° (J/mol·K)</label><input type="number" id="gb-dS" step="any"></div>
+    <div><label class="lbl">T (°C)</label><input type="number" id="gb-T" value="25" step="any"></div>
+  </div>
+  <button class="btn" onclick="calcGibbs()">🌡️ CALCULAR ΔG°</button>
+  <div class="rb" id="gb-r"></div>
+</div>
+<div class="tc" id="tq-tdh">
+<table class="tbl"><tr><th>Compuesto</th><th>Fórmula</th><th>ΔH°f (kJ/mol)</th><th>Estado</th></tr>
+<tr><td>Agua</td><td>H₂O</td><td style="color:var(--acc2)">-285.8</td><td>(l)</td></tr>
+<tr><td>Agua vapor</td><td>H₂O</td><td style="color:var(--acc2)">-241.8</td><td>(g)</td></tr>
+<tr><td>CO₂</td><td>CO₂</td><td style="color:var(--acc2)">-393.5</td><td>(g)</td></tr>
+<tr><td>CO</td><td>CO</td><td style="color:var(--acc2)">-110.5</td><td>(g)</td></tr>
+<tr><td>Metano</td><td>CH₄</td><td style="color:var(--acc2)">-74.87</td><td>(g)</td></tr>
+<tr><td>Etanol</td><td>C₂H₅OH</td><td style="color:var(--acc2)">-277.7</td><td>(l)</td></tr>
+<tr><td>Glucosa</td><td>C₆H₁₂O₆</td><td style="color:var(--acc2)">-1274.4</td><td>(s)</td></tr>
+<tr><td>NH₃</td><td>NH₃</td><td style="color:var(--acc2)">-46.19</td><td>(g)</td></tr>
+<tr><td>CaO</td><td>CaO</td><td style="color:var(--acc2)">-635.5</td><td>(s)</td></tr>
+<tr><td>CaCO₃</td><td>CaCO₃</td><td style="color:var(--acc2)">-1207.1</td><td>(s)</td></tr>
+<tr><td>Fe₂O₃</td><td>Fe₂O₃</td><td style="color:var(--acc2)">-824.2</td><td>(s)</td></tr>
+<tr><td>HCl(g)</td><td>HCl</td><td style="color:var(--acc2)">-92.31</td><td>(g)</td></tr>
+<tr><td>SO₂</td><td>SO₂</td><td style="color:var(--acc2)">-296.9</td><td>(g)</td></tr>
+<tr><td>SO₃</td><td>SO₃</td><td style="color:var(--acc2)">-395.2</td><td>(g)</td></tr>
+<tr><td>NO</td><td>NO</td><td style="color:var(--acc3)">+90.37</td><td>(g)</td></tr>
+<tr><td>NO₂</td><td>NO₂</td><td style="color:var(--acc3)">+33.84</td><td>(g)</td></tr>
+<tr><td>Benceno</td><td>C₆H₆</td><td style="color:var(--acc3)">+49.0</td><td>(l)</td></tr>
+<tr><td>Propano</td><td>C₃H₈</td><td style="color:var(--acc2)">-103.8</td><td>(g)</td></tr>
+</table></div>
+</div></div>
+
+<!-- CINÉTICA -->
+<div class="page" id="p-cin">
+<div class="card"><div class="ctitle">⏱ CINÉTICA QUÍMICA</div>
+<div class="tbrow">
+  <button class="tb active" onclick="st(this,'cin','ord')">LEYES INTEGRADAS</button>
+  <button class="tb" onclick="st(this,'cin','arr')">ARRHENIUS</button>
+  <button class="tb" onclick="st(this,'cin','vm')">VIDA MEDIA</button>
+</div>
+<div class="tc active" id="cin-ord">
+<table class="tbl" style="margin-bottom:14px"><tr><th>Orden</th><th>v = </th><th>Ecuación integrada</th><th>t₁/₂</th></tr>
+<tr><td style="color:var(--acc)">0</td><td>k</td><td>[A]=[A]₀−kt</td><td>[A]₀/2k</td></tr>
+<tr><td style="color:var(--acc)">1</td><td>k[A]</td><td>ln[A]=ln[A]₀−kt</td><td>ln2/k</td></tr>
+<tr><td style="color:var(--acc)">2</td><td>k[A]²</td><td>1/[A]=1/[A]₀+kt</td><td>1/(k[A]₀)</td></tr>
+</table>
+<div class="g4">
+  <div><label class="lbl">ORDEN</label><select id="cin-ord-s"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option></select></div>
+  <div><label class="lbl">k</label><input type="number" id="cin-k" step="any" placeholder="Ej: 0.002"></div>
+  <div><label class="lbl">[A]₀ (M)</label><input type="number" id="cin-A0" step="any"></div>
+  <div><label class="lbl">t (s)</label><input type="number" id="cin-t" step="any"></div>
+</div>
+<button class="btn" onclick="calcCin()">⏱ CALCULAR [A]</button>
+<div class="rb" id="cin-r"></div>
+</div>
+<div class="tc" id="cin-arr">
+<div style="color:var(--acc3);font-family:var(--fm);font-size:0.76rem;margin-bottom:8px">ln(k₂/k₁) = (Ea/R)(1/T₁ − 1/T₂)</div>
+<div class="g2">
+  <div><label class="lbl">k₁</label><input type="number" id="arr-k1" step="any"></div>
+  <div><label class="lbl">T₁ (°C)</label><input type="number" id="arr-T1" step="any"></div>
+  <div><label class="lbl">k₂</label><input type="number" id="arr-k2" step="any" placeholder="Deja vacío para calcular"></div>
+  <div><label class="lbl">T₂ (°C)</label><input type="number" id="arr-T2" step="any"></div>
+  <div><label class="lbl">Ea (kJ/mol)</label><input type="number" id="arr-Ea" step="any" placeholder="Deja vacío para calcular"></div>
+</div>
+<button class="btn" onclick="calcArr()">⏱ CALCULAR</button>
+<div class="rb" id="arr-r"></div>
+</div>
+<div class="tc" id="cin-vm">
+<div class="g3">
+  <div><label class="lbl">k (s⁻¹)</label><input type="number" id="vm-k" step="any"></div>
+  <div><label class="lbl">t₁/₂ (s)</label><input type="number" id="vm-t" step="any"></div>
+  <div><label class="lbl">[A]₀</label><input type="number" id="vm-A0" step="any"></div>
+  <div><label class="lbl">Número de vidas medias n</label><input type="number" id="vm-n" step="any"></div>
+</div>
+<button class="btn" onclick="calcVM()">⏱ CALCULAR</button>
+<div class="rb" id="vm-r"></div>
+</div>
+</div></div>
+
+<!-- EQUILIBRIO -->
+<div class="page" id="p-eq">
+<div class="card"><div class="ctitle">⚖ EQUILIBRIO QUÍMICO</div>
+<div class="tbrow">
+  <button class="tb active" onclick="st(this,'eq','kc')">Kc / Kp</button>
+  <button class="tb" onclick="st(this,'eq','qrxn')">COCIENTE Q</button>
+  <button class="tb" onclick="st(this,'eq','icf')">TABLA ICF</button>
+  <button class="tb" onclick="st(this,'eq','lechat')">LE CHATELIER</button>
+</div>
+<div class="tc active" id="eq-kc">
+<div style="color:var(--acc3);font-family:var(--fm);font-size:0.76rem;margin-bottom:10px">Kc = [C]ᶜ·[D]ᵈ / ([A]ᵃ·[B]ᵇ)</div>
+<div class="g2">
+  <div><label class="lbl">REACTIVOS (especie:coef:conc ; ...)</label><input type="text" id="kc-r" placeholder="A:1:0.5 ; B:2:0.3"></div>
+  <div><label class="lbl">PRODUCTOS (especie:coef:conc ; ...)</label><input type="text" id="kc-p" placeholder="C:1:0.8 ; D:1:0.4"></div>
+  <div><label class="lbl">T (°C) para Kp</label><input type="number" id="kc-T" value="25"></div>
+  <div><label class="lbl">Δn gases</label><input type="number" id="kc-dn" value="0"></div>
+</div>
+<button class="btn" onclick="calcKc()">⚖ CALCULAR Kc/Kp</button>
+<div class="rb" id="kc-r"></div>
+</div>
+<div class="tc" id="eq-qrxn">
+<div class="g2">
+  <div><label class="lbl">Q (cociente)</label><input type="number" id="qr-Q" step="any"></div>
+  <div><label class="lbl">K (constante)</label><input type="number" id="qr-K" step="any"></div>
+</div>
+<button class="btn" onclick="calcQ()">⚖ COMPARAR</button>
+<div class="rb" id="qr-r"></div>
+</div>
+<div class="tc" id="eq-icf">
+<div style="font-size:0.74rem;color:var(--muted);margin-bottom:8px">Para aA ⇌ cC + dD (aproximación cuadrática/iterativa)</div>
+<div class="g3">
+  <div><label class="lbl">[A]₀ (M)</label><input type="number" id="icf-A0" step="any" min="0"></div>
+  <div><label class="lbl">[Prod]₀ (M)</label><input type="number" id="icf-P0" value="0" step="any" min="0"></div>
+  <div><label class="lbl">Kc</label><input type="number" id="icf-K" step="any" min="0"></div>
+  <div><label class="lbl">Coef reactivo (a)</label><input type="number" id="icf-a" value="1" min="1"></div>
+  <div><label class="lbl">Coef producto total</label><input type="number" id="icf-c" value="2" min="1"></div>
+</div>
+<button class="btn" onclick="calcICF()">⚖ CALCULAR x</button>
+<div class="rb" id="icf-r"></div>
+</div>
+<div class="tc" id="eq-lechat">
+<table class="tbl"><tr><th>Perturbación</th><th>Dirección</th><th>Efecto en K</th></tr>
+<tr><td>↑ [Reactivo]</td><td style="color:var(--acc)">→ Productos</td><td>Sin cambio</td></tr>
+<tr><td>↑ [Producto]</td><td style="color:var(--acc2)">← Reactivos</td><td>Sin cambio</td></tr>
+<tr><td>↑ Presión (↓V)</td><td>→ Menos moles gas</td><td>Sin cambio</td></tr>
+<tr><td>↑ T (endotérmica)</td><td style="color:var(--acc)">→ Productos</td><td style="color:var(--acc)">K ↑</td></tr>
+<tr><td>↑ T (exotérmica)</td><td style="color:var(--acc2)">← Reactivos</td><td style="color:var(--acc2)">K ↓</td></tr>
+<tr><td>Catalizador</td><td>Sin desplazamiento</td><td>Sin cambio (velocidad ↑)</td></tr>
+<tr><td>Gas inerte (V=cte)</td><td>Sin desplazamiento</td><td>Sin cambio</td></tr>
+</table></div>
+</div></div>
+
+<!-- pH -->
+<div class="page" id="p-ph">
+<div class="card"><div class="ctitle">🧪 pH &amp; ÁCIDO-BASE</div>
+<div class="tbrow">
+  <button class="tb active" onclick="st(this,'ph','calc')">CALCULADORA pH</button>
+  <button class="tb" onclick="st(this,'ph','buf')">BUFFER Henderson</button>
+  <button class="tb" onclick="st(this,'ph','tit')">TITULACIÓN</button>
+  <button class="tb" onclick="st(this,'ph','ka')">TABLA Ka/Kb</button>
+</div>
+<div class="tc active" id="ph-calc">
+<div class="g2">
+  <div><label class="lbl">TIPO</label>
+  <select id="ph-tipo">
+    <option value="sa">Ácido fuerte</option><option value="sb">Base fuerte</option>
+    <option value="wa">Ácido débil</option><option value="wb">Base débil</option>
+  </select></div>
+  <div><label class="lbl">Concentración (M)</label><input type="number" id="ph-C" step="any" placeholder="Ej: 0.1"></div>
+  <div><label class="lbl">Ka o Kb (si débil)</label><input type="number" id="ph-K" step="any" placeholder="Ej: 1.8e-5"></div>
+  <div style="display:flex;align-items:flex-end"><button class="btn" style="width:100%;margin:0" onclick="calcPH()">🧪 CALCULAR pH</button></div>
+</div>
+<div class="rb" id="ph-r"></div>
+</div>
+<div class="tc" id="ph-buf">
+<div style="color:var(--acc3);font-family:var(--fm);font-size:0.76rem;margin-bottom:8px">pH = pKa + log([A⁻]/[HA])</div>
+<div class="g3">
+  <div><label class="lbl">Ka</label><input type="number" id="buf-Ka" step="any" placeholder="Ej: 1.8e-5"></div>
+  <div><label class="lbl">[ácido HA] (M)</label><input type="number" id="buf-Ha" step="any"></div>
+  <div><label class="lbl">[base A⁻] (M)</label><input type="number" id="buf-A" step="any"></div>
+</div>
+<button class="btn" onclick="calcBuf()">🧪 CALCULAR pH</button>
+<div class="rb" id="buf-r"></div>
+</div>
+<div class="tc" id="ph-tit">
+<div class="g2">
+  <div><label class="lbl">V ácido (mL)</label><input type="number" id="tit-Va" value="25" step="any"></div>
+  <div><label class="lbl">C ácido (M)</label><input type="number" id="tit-Ca" value="0.1" step="any"></div>
+  <div><label class="lbl">C base (M)</label><input type="number" id="tit-Cb" value="0.1" step="any"></div>
+  <div><label class="lbl">Tipo</label>
+  <select id="tit-tipo">
+    <option value="sa-sb">Ácido fuerte / Base fuerte</option>
+    <option value="wa-sb">Ácido débil / Base fuerte</option>
+  </select></div>
+  <div><label class="lbl">Ka (si ácido débil)</label><input type="number" id="tit-Ka" value="0.00001" step="any"></div>
+</div>
+<button class="btn" onclick="drawTit()">📈 GRAFICAR CURVA</button>
+<canvas id="tit-canvas" width="560" height="260"></canvas>
+</div>
+<div class="tc" id="ph-ka">
+<table class="tbl"><tr><th>Ácido / Base</th><th>Ka / Kb</th><th>pKa / pKb</th></tr>
+<tr><td>Acético (CH₃COOH)</td><td>1.8×10⁻⁵</td><td>4.74</td></tr>
+<tr><td>Fórmico (HCOOH)</td><td>1.77×10⁻⁴</td><td>3.75</td></tr>
+<tr><td>Benzoico</td><td>6.5×10⁻⁵</td><td>4.19</td></tr>
+<tr><td>H₂CO₃ (1ª)</td><td>4.3×10⁻⁷</td><td>6.37</td></tr>
+<tr><td>HCO₃⁻ (2ª)</td><td>4.8×10⁻¹¹</td><td>10.33</td></tr>
+<tr><td>HCN</td><td>6.2×10⁻¹⁰</td><td>9.21</td></tr>
+<tr><td>H₃PO₄ (1ª)</td><td>7.5×10⁻³</td><td>2.12</td></tr>
+<tr><td>H₂PO₄⁻ (2ª)</td><td>6.2×10⁻⁸</td><td>7.21</td></tr>
+<tr><td>HPO₄²⁻ (3ª)</td><td>4.8×10⁻¹³</td><td>12.32</td></tr>
+<tr><td>HClO</td><td>3.0×10⁻⁸</td><td>7.52</td></tr>
+<tr><td>NH₃ (Kb)</td><td>Kb=1.8×10⁻⁵</td><td>4.74</td></tr>
+</table></div>
+</div></div>
+<!-- SOLUCIONES -->
+<div class="page" id="p-sol">
+<div class="card"><div class="ctitle">💧 SOLUCIONES &amp; CONCENTRACIÓN</div>
+<div class="tbrow">
+  <button class="tb active" onclick="st(this,'sol','conc')">CONCENTRACIÓN</button>
+  <button class="tb" onclick="st(this,'sol','dil')">DILUCIÓN</button>
+  <button class="tb" onclick="st(this,'sol','mez')">MEZCLA</button>
+</div>
+<div class="tc active" id="sol-conc">
+<div class="g3">
+  <div><label class="lbl">Masa soluto (g)</label><input type="number" id="sc-ms" step="any"></div>
+  <div><label class="lbl">M molar soluto (g/mol)</label><input type="number" id="sc-MM" step="any" placeholder="Ej: 58.44"></div>
+  <div><label class="lbl">Masa solvente (g)</label><input type="number" id="sc-msolv" step="any"></div>
+  <div><label class="lbl">V solución (mL)</label><input type="number" id="sc-V" step="any"></div>
+</div>
+<button class="btn" onclick="calcConc()">💧 CALCULAR</button>
+<div class="rb" id="sc-r"></div>
+</div>
+<div class="tc" id="sol-dil">
+<div style="color:var(--acc3);font-family:var(--fm);font-size:0.76rem;margin-bottom:8px">C₁V₁ = C₂V₂ (deja vacío lo que quieres calcular)</div>
+<div class="g4">
+  <div><label class="lbl">C₁ (M)</label><input type="number" id="dil-C1" step="any"></div>
+  <div><label class="lbl">V₁ (mL)</label><input type="number" id="dil-V1" step="any"></div>
+  <div><label class="lbl">C₂ (M)</label><input type="number" id="dil-C2" step="any"></div>
+  <div><label class="lbl">V₂ (mL)</label><input type="number" id="dil-V2" step="any"></div>
+</div>
+<button class="btn" onclick="calcDil()">💧 CALCULAR</button>
+<div class="rb" id="dil-r"></div>
+</div>
+<div class="tc" id="sol-mez">
+<div style="color:var(--acc3);font-family:var(--fm);font-size:0.76rem;margin-bottom:8px">C = (C₁V₁ + C₂V₂) / (V₁+V₂)</div>
+<div class="g2">
+  <div><label class="lbl">C₁ (M)</label><input type="number" id="mx-C1" step="any"></div>
+  <div><label class="lbl">V₁ (mL)</label><input type="number" id="mx-V1" step="any"></div>
+  <div><label class="lbl">C₂ (M)</label><input type="number" id="mx-C2" step="any"></div>
+  <div><label class="lbl">V₂ (mL)</label><input type="number" id="mx-V2" step="any"></div>
+</div>
+<button class="btn" onclick="calcMez()">💧 CALCULAR</button>
+<div class="rb" id="mx-r"></div>
+</div>
+</div></div>
+
+<!-- KSP -->
+<div class="page" id="p-ksp">
+<div class="card"><div class="ctitle">📋 SOLUBILIDAD &amp; Ksp</div>
+<div class="tbrow">
+  <button class="tb active" onclick="st(this,'ksp','calc')">CALCULADORA</button>
+  <button class="tb" onclick="st(this,'ksp','tabla')">TABLA Ksp</button>
+  <button class="tb" onclick="st(this,'ksp','reg')">REGLAS SOLUBILIDAD</button>
+</div>
+<div class="tc active" id="ksp-calc">
+<div class="g2">
+  <div><label class="lbl">FÓRMULA (Ej: AgCl, CaF2)</label><input type="text" id="ksp-f" placeholder="AgCl"></div>
+  <div><label class="lbl">CALCULAR</label>
+  <select id="ksp-mode"><option value="s">s desde Ksp</option><option value="k">Ksp desde s</option></select></div>
+  <div><label class="lbl">Ksp</label><input type="number" id="ksp-k" step="any" placeholder="Ej: 1.8e-10"></div>
+  <div><label class="lbl">s (mol/L)</label><input type="number" id="ksp-s" step="any" placeholder="Ej: 1.34e-5"></div>
+</div>
+<button class="btn" onclick="calcKsp()">📋 CALCULAR</button>
+<div class="rb" id="ksp-r"></div>
+</div>
+<div class="tc" id="ksp-tabla">
+<table class="tbl"><tr><th>Compuesto</th><th>Fórmula</th><th>Ksp (25°C)</th></tr>
+<tr><td>Cloruro de plata</td><td>AgCl</td><td>1.8×10⁻¹⁰</td></tr>
+<tr><td>Bromuro de plata</td><td>AgBr</td><td>5.0×10⁻¹³</td></tr>
+<tr><td>Yoduro de plata</td><td>AgI</td><td>8.5×10⁻¹⁷</td></tr>
+<tr><td>Sulfato de bario</td><td>BaSO₄</td><td>1.1×10⁻¹⁰</td></tr>
+<tr><td>Carbonato de calcio</td><td>CaCO₃</td><td>3.3×10⁻⁹</td></tr>
+<tr><td>Fluoruro de calcio</td><td>CaF₂</td><td>3.9×10⁻¹¹</td></tr>
+<tr><td>Hidróxido de hierro(III)</td><td>Fe(OH)₃</td><td>6.3×10⁻³⁸</td></tr>
+<tr><td>Hidróxido de magnesio</td><td>Mg(OH)₂</td><td>5.6×10⁻¹²</td></tr>
+<tr><td>Sulfuro de plomo</td><td>PbS</td><td>7.0×10⁻²⁹</td></tr>
+<tr><td>Sulfato de plomo</td><td>PbSO₄</td><td>1.8×10⁻⁸</td></tr>
+<tr><td>Sulfuro de zinc</td><td>ZnS</td><td>1.6×10⁻²⁴</td></tr>
+<tr><td>Hidróxido de aluminio</td><td>Al(OH)₃</td><td>1.3×10⁻³³</td></tr>
+<tr><td>Cromato de plata</td><td>Ag₂CrO₄</td><td>1.1×10⁻¹²</td></tr>
+<tr><td>Fosfato de calcio</td><td>Ca₃(PO₄)₂</td><td>2.0×10⁻²⁹</td></tr>
+</table></div>
+<div class="tc" id="ksp-reg">
+<table class="tbl"><tr><th>Regla</th><th>Ion / Compuesto</th><th>Excepciones</th></tr>
+<tr><td style="color:var(--acc3)">SOLUBLES</td><td>Nitratos (NO₃⁻)</td><td>Ninguna</td></tr>
+<tr><td style="color:var(--acc3)">SOLUBLES</td><td>Haluros (Cl⁻,Br⁻,I⁻)</td><td>Ag⁺, Pb²⁺, Hg₂²⁺</td></tr>
+<tr><td style="color:var(--acc3)">SOLUBLES</td><td>Sulfatos (SO₄²⁻)</td><td>Ba²⁺, Pb²⁺, Ca²⁺, Sr²⁺</td></tr>
+<tr><td style="color:var(--acc3)">SOLUBLES</td><td>Metales alcalinos, NH₄⁺</td><td>Ninguna</td></tr>
+<tr><td style="color:var(--acc2)">INSOLUBLES</td><td>Hidróxidos (OH⁻)</td><td>Alcalinos, Ba²⁺, Ca²⁺</td></tr>
+<tr><td style="color:var(--acc2)">INSOLUBLES</td><td>Carbonatos (CO₃²⁻)</td><td>Alcalinos, NH₄⁺</td></tr>
+<tr><td style="color:var(--acc2)">INSOLUBLES</td><td>Fosfatos (PO₄³⁻)</td><td>Alcalinos, NH₄⁺</td></tr>
+<tr><td style="color:var(--acc2)">INSOLUBLES</td><td>Sulfuros (S²⁻)</td><td>Alcalinos, NH₄⁺, alcalinotérreos</td></tr>
+</table></div>
+</div></div>
+
+<!-- COLIGATIVAS -->
+<div class="page" id="p-colig">
+<div class="card"><div class="ctitle">🌊 PROPIEDADES COLIGATIVAS</div>
+<div style="color:var(--acc3);font-family:var(--fm);font-size:0.74rem;margin-bottom:10px">ΔTf = Kf·m·i &nbsp;|&nbsp; ΔTb = Kb·m·i &nbsp;|&nbsp; π = iMRT &nbsp;|&nbsp; ΔP = P°·x_soluto</div>
+<div class="g2">
+  <div><label class="lbl">n soluto (mol)</label><input type="number" id="col-n" step="any" min="0"></div>
+  <div><label class="lbl">m solvente (kg)</label><input type="number" id="col-m" step="any" min="0"></div>
+  <div><label class="lbl">SOLVENTE</label>
+  <select id="col-s" onchange="setCol()">
+    <option value="1.86,0.512,0,100,0.04243,18.015">Agua (H₂O)</option>
+    <option value="4.90,2.53,5.5,80.1,0.1246,78.11">Benceno</option>
+    <option value="1.99,1.16,-97.8,64.7,0.1627,32.04">Metanol</option>
+  </select></div>
+  <div><label class="lbl">i (Van't Hoff, 1=no iónico)</label><input type="number" id="col-i" value="1" step="any" min="1"></div>
+  <div><label class="lbl">T (°C) para presión osmótica</label><input type="number" id="col-T" value="25" step="any"></div>
+</div>
+<button class="btn" onclick="calcCol()">🌊 CALCULAR</button>
+<div class="rb" id="col-r"></div>
+</div></div>
+
+<!-- ELECTROQUÍMICA -->
+<div class="page" id="p-electroq">
+<div class="card"><div class="ctitle">🔋 ELECTROQUÍMICA</div>
+<div class="tbrow">
+  <button class="tb active" onclick="st(this,'ec','celda')">CELDA GALVÁNICA</button>
+  <button class="tb" onclick="st(this,'ec','nernst')">NERNST</button>
+  <button class="tb" onclick="st(this,'ec','faraday')">FARADAY</button>
+  <button class="tb" onclick="st(this,'ec','te')">TABLA E°</button>
+</div>
+<div class="tc active" id="ec-celda">
+<div style="color:var(--acc3);font-family:var(--fm);font-size:0.76rem;margin-bottom:8px">E°celda = E°cátodo − E°ánodo &nbsp;|&nbsp; ΔG° = −nFE°</div>
+<div class="g2">
+  <div><label class="lbl">CÁTODO (reducción)</label>
+  <select id="ec-cat">
+    <option value="2.87">F₂+2e⁻→2F⁻ (E°=+2.87V)</option>
+    <option value="1.507">MnO₄⁻+8H⁺+5e⁻→Mn²⁺+4H₂O (E°=+1.507V)</option>
+    <option value="1.36">Cl₂+2e⁻→2Cl⁻ (E°=+1.36V)</option>
+    <option value="1.33">Cr₂O₇²⁻+14H⁺+6e⁻→2Cr³⁺+7H₂O (E°=+1.33V)</option>
+    <option value="1.23">O₂+4H⁺+4e⁻→2H₂O (E°=+1.23V)</option>
+    <option value="0.80">Ag⁺+e⁻→Ag (E°=+0.80V)</option>
+    <option value="0.77">Fe³⁺+e⁻→Fe²⁺ (E°=+0.77V)</option>
+    <option value="0.34">Cu²⁺+2e⁻→Cu (E°=+0.34V)</option>
+    <option value="0.00">2H⁺+2e⁻→H₂ (E°=0.00V)</option>
+    <option value="-0.13">Pb²⁺+2e⁻→Pb (E°=−0.13V)</option>
+    <option value="-0.25">Ni²⁺+2e⁻→Ni (E°=−0.25V)</option>
+    <option value="-0.44">Fe²⁺+2e⁻→Fe (E°=−0.44V)</option>
+    <option value="-0.76">Zn²⁺+2e⁻→Zn (E°=−0.76V)</option>
+    <option value="-1.66">Al³⁺+3e⁻→Al (E°=−1.66V)</option>
+    <option value="-2.71">Na⁺+e⁻→Na (E°=−2.71V)</option>
+    <option value="-3.05">Li⁺+e⁻→Li (E°=−3.05V)</option>
+  </select></div>
+  <div><label class="lbl">ÁNODO (oxidación)</label>
+  <select id="ec-ano">
+    <option value="-0.76">Zn²⁺+2e⁻→Zn (E°=−0.76V)</option>
+    <option value="-0.44">Fe²⁺+2e⁻→Fe (E°=−0.44V)</option>
+    <option value="-0.25">Ni²⁺+2e⁻→Ni (E°=−0.25V)</option>
+    <option value="0.00">2H⁺+2e⁻→H₂ (E°=0.00V)</option>
+    <option value="0.34">Cu²⁺+2e⁻→Cu (E°=+0.34V)</option>
+    <option value="-1.66">Al³⁺+3e⁻→Al (E°=−1.66V)</option>
+  </select></div>
+  <div><label class="lbl">n (electrones transferidos)</label><input type="number" id="ec-n" value="2" min="1" max="8"></div>
+</div>
+<button class="btn" onclick="calcCelda()">🔋 CALCULAR</button>
+<div class="rb" id="ec-r"></div>
+</div>
+<div class="tc" id="ec-nernst">
+<div style="color:var(--acc3);font-family:var(--fm);font-size:0.76rem;margin-bottom:8px">E = E° − (0.05916/n)·log(Q) a 25°C</div>
+<div class="g3">
+  <div><label class="lbl">E° (V)</label><input type="number" id="nr-E0" step="any"></div>
+  <div><label class="lbl">n (e⁻)</label><input type="number" id="nr-n" value="2" min="1"></div>
+  <div><label class="lbl">Q</label><input type="number" id="nr-Q" step="any"></div>
+  <div><label class="lbl">T (°C)</label><input type="number" id="nr-T" value="25"></div>
+</div>
+<button class="btn" onclick="calcNernst()">🔋 CALCULAR E</button>
+<div class="rb" id="nr-r"></div>
+</div>
+<div class="tc" id="ec-faraday">
+<div style="color:var(--acc3);font-family:var(--fm);font-size:0.76rem;margin-bottom:8px">m = M·I·t/(n·F) &nbsp;|&nbsp; F = 96485 C/mol</div>
+<div class="g3">
+  <div><label class="lbl">I (A)</label><input type="number" id="fr-I" step="any"></div>
+  <div><label class="lbl">t (s)</label><input type="number" id="fr-t" step="any"></div>
+  <div><label class="lbl">n (e⁻ por ion)</label><input type="number" id="fr-n" value="2" min="1"></div>
+  <div><label class="lbl">M metal (g/mol)</label><input type="number" id="fr-M" step="any" placeholder="Ej: 63.55 para Cu"></div>
+</div>
+<button class="btn" onclick="calcFar()">🔋 CALCULAR MASA</button>
+<div class="rb" id="fr-r"></div>
+</div>
+<div class="tc" id="ec-te">
+<table class="tbl"><tr><th>Semirreacción (reducción)</th><th>E° (V)</th></tr>
+<tr><td>F₂ + 2e⁻ → 2F⁻</td><td style="color:var(--acc3)">+2.87</td></tr>
+<tr><td>MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O</td><td style="color:var(--acc3)">+1.507</td></tr>
+<tr><td>Cl₂ + 2e⁻ → 2Cl⁻</td><td style="color:var(--acc3)">+1.36</td></tr>
+<tr><td>Cr₂O₇²⁻ + 14H⁺ + 6e⁻ → 2Cr³⁺ + 7H₂O</td><td style="color:var(--acc3)">+1.33</td></tr>
+<tr><td>O₂ + 4H⁺ + 4e⁻ → 2H₂O</td><td style="color:var(--acc3)">+1.23</td></tr>
+<tr><td>Br₂ + 2e⁻ → 2Br⁻</td><td style="color:var(--acc3)">+1.065</td></tr>
+<tr><td>Ag⁺ + e⁻ → Ag</td><td style="color:var(--acc3)">+0.80</td></tr>
+<tr><td>Fe³⁺ + e⁻ → Fe²⁺</td><td style="color:var(--acc3)">+0.77</td></tr>
+<tr><td>I₂ + 2e⁻ → 2I⁻</td><td style="color:var(--acc3)">+0.54</td></tr>
+<tr><td>Cu²⁺ + 2e⁻ → Cu</td><td style="color:var(--acc3)">+0.34</td></tr>
+<tr><td>2H⁺ + 2e⁻ → H₂</td><td>0.00</td></tr>
+<tr><td>Pb²⁺ + 2e⁻ → Pb</td><td style="color:var(--acc2)">-0.13</td></tr>
+<tr><td>Ni²⁺ + 2e⁻ → Ni</td><td style="color:var(--acc2)">-0.25</td></tr>
+<tr><td>Fe²⁺ + 2e⁻ → Fe</td><td style="color:var(--acc2)">-0.44</td></tr>
+<tr><td>Zn²⁺ + 2e⁻ → Zn</td><td style="color:var(--acc2)">-0.76</td></tr>
+<tr><td>Al³⁺ + 3e⁻ → Al</td><td style="color:var(--acc2)">-1.66</td></tr>
+<tr><td>Mg²⁺ + 2e⁻ → Mg</td><td style="color:var(--acc2)">-2.37</td></tr>
+<tr><td>Na⁺ + e⁻ → Na</td><td style="color:var(--acc2)">-2.71</td></tr>
+<tr><td>Li⁺ + e⁻ → Li</td><td style="color:var(--acc2)">-3.05</td></tr>
+</table></div>
+</div></div>
+
+<!-- CORROSIÓN -->
+<div class="page" id="p-corr">
+<div class="card"><div class="ctitle">🔩 CORROSIÓN &amp; PROTECCIÓN</div>
+<table class="tbl"><tr><th>Metal</th><th>E° (V)</th><th>Resistencia</th><th>Protección</th></tr>
+<tr><td>Oro (Au)</td><td>+1.50</td><td style="color:var(--acc3)">Excelente</td><td>No requiere</td></tr>
+<tr><td>Platino (Pt)</td><td>+1.20</td><td style="color:var(--acc3)">Excelente</td><td>No requiere</td></tr>
+<tr><td>Plata (Ag)</td><td>+0.80</td><td style="color:var(--acc3)">Alta</td><td>Laca</td></tr>
+<tr><td>Cobre (Cu)</td><td>+0.34</td><td style="color:var(--acc3)">Buena</td><td>Recubrimiento</td></tr>
+<tr><td>Aluminio (Al)</td><td>-1.66</td><td style="color:var(--acc3)">Alta (Al₂O₃)</td><td>Anodizado</td></tr>
+<tr><td>Hierro (Fe)</td><td>-0.44</td><td style="color:var(--acc2)">Baja (oxida)</td><td>Galvanizado, pintura</td></tr>
+<tr><td>Zinc (Zn)</td><td>-0.76</td><td style="color:var(--muted)">Moderada</td><td>Ánodo sacrificial</td></tr>
+<tr><td>Magnesio (Mg)</td><td>-2.37</td><td style="color:var(--acc2)">Muy baja</td><td>Aleaciones</td></tr>
+</table>
+<div style="margin-top:14px;padding:13px;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);border-radius:6px;font-size:0.76rem;line-height:1.8">
+<strong style="color:var(--acc2);font-family:var(--fh);font-size:0.62rem;letter-spacing:2px">MÉTODOS DE PROTECCIÓN</strong><br>
+• <b>Galvanizado:</b> recubrimiento con Zn (ánodo sacrificial protege Fe)<br>
+• <b>Protección catódica:</b> corriente eléctrica para mantener metal como cátodo<br>
+• <b>Pasivación:</b> capa protectora Al₂O₃, Cr₂O₃ (acero inoxidable 18%Cr + 8%Ni)<br>
+• <b>Recubrimientos:</b> pintura, esmalte, plástico, cromado, niquelado
+</div></div></div>
+
+<!-- GRUPOS FUNCIONALES -->
+<div class="page" id="p-grupos">
+<div class="card"><div class="ctitle">🔗 GRUPOS FUNCIONALES ORGÁNICOS</div>
+<table class="tbl"><tr><th>Grupo</th><th>Fórmula general</th><th>Sufijo IUPAC</th><th>Ejemplo</th></tr>
+<tr><td style="color:var(--acc)">Alcano</td><td>C–C</td><td>-ano</td><td>Propano C₃H₈</td></tr>
+<tr><td style="color:var(--acc)">Alqueno</td><td>C=C</td><td>-eno</td><td>Eteno C₂H₄</td></tr>
+<tr><td style="color:var(--acc)">Alquino</td><td>C≡C</td><td>-ino</td><td>Etino C₂H₂</td></tr>
+<tr><td style="color:var(--acc)">Aromático</td><td>Anillo C₆</td><td>-benceno</td><td>Benceno C₆H₆</td></tr>
+<tr><td style="color:var(--acc3)">Alcohol</td><td>R–OH</td><td>-ol</td><td>Etanol C₂H₅OH</td></tr>
+<tr><td style="color:var(--acc3)">Éter</td><td>R–O–R'</td><td>éter de...</td><td>Dietiléter C₄H₁₀O</td></tr>
+<tr><td style="color:var(--acc3)">Aldehído</td><td>R–CHO</td><td>-al</td><td>Etanal CH₃CHO</td></tr>
+<tr><td style="color:var(--acc3)">Cetona</td><td>R–CO–R'</td><td>-ona</td><td>Acetona (CH₃)₂CO</td></tr>
+<tr><td style="color:var(--acc4)">Ácido carboxílico</td><td>R–COOH</td><td>ácido ...-oico</td><td>Ácido acético CH₃COOH</td></tr>
+<tr><td style="color:var(--acc4)">Éster</td><td>R–COO–R'</td><td>-oato de...</td><td>Acetato de etilo</td></tr>
+<tr><td style="color:var(--acc4)">Amida</td><td>R–CONH₂</td><td>-amida</td><td>Etanamida CH₃CONH₂</td></tr>
+<tr><td style="color:var(--acc4)">Amina</td><td>R–NH₂</td><td>-amina</td><td>Metilamina CH₃NH₂</td></tr>
+<tr><td style="color:var(--acc2)">Haluro</td><td>R–X</td><td>cloro-/bromo-/...</td><td>Cloroetano C₂H₅Cl</td></tr>
+<tr><td style="color:var(--acc2)">Tiol</td><td>R–SH</td><td>-tiol</td><td>Metanotiol CH₃SH</td></tr>
+</table></div></div>
+
+<!-- ISOMERÍA -->
+<div class="page" id="p-isomeria">
+<div class="card"><div class="ctitle">🔄 ISOMERÍA ORGÁNICA</div>
+<table class="tbl"><tr><th>Tipo</th><th>Descripción</th><th>Ejemplo</th></tr>
+<tr><td style="color:var(--acc)">Cadena</td><td>Diferente esqueleto carbónico</td><td>n-butano vs isobutano</td></tr>
+<tr><td style="color:var(--acc)">Posición</td><td>Mismo grupo, diferente posición</td><td>1-butanol vs 2-butanol</td></tr>
+<tr><td style="color:var(--acc)">Función</td><td>Diferente grupo funcional</td><td>Etanol vs dimetil éter (C₂H₆O)</td></tr>
+<tr><td style="color:var(--acc3)">Geométrica (cis/trans)</td><td>Diferente disposición en C=C</td><td>cis vs trans 2-buteno</td></tr>
+<tr><td style="color:var(--acc3)">Óptica (R/S)</td><td>Carbono quiral, imágenes especulares</td><td>L-alanina vs D-alanina</td></tr>
+<tr><td style="color:var(--acc4)">Tautomería</td><td>Equilibrio rápido (ceto-enol)</td><td>Acetona ⇌ propenol</td></tr>
+</table></div></div>
+
+<!-- REACCIONES ORGÁNICAS -->
+<div class="page" id="p-orgrxn">
+<div class="card"><div class="ctitle">⚗ REACCIONES ORGÁNICAS</div>
+<table class="tbl"><tr><th>Tipo</th><th>Reactivos</th><th>Productos</th><th>Condición</th></tr>
+<tr><td style="color:var(--acc)">Combustión</td><td>CₙH₂ₙ₊₂ + O₂</td><td>CO₂ + H₂O</td><td>Exceso O₂, calor</td></tr>
+<tr><td style="color:var(--acc)">Halogenación alcano</td><td>R–H + X₂</td><td>R–X + HX</td><td>hν (UV)</td></tr>
+<tr><td style="color:var(--acc3)">Adición HX (Markovnikov)</td><td>C=C + HX</td><td>R–CHX–CH₃</td><td>T° suave</td></tr>
+<tr><td style="color:var(--acc3)">Adición X₂</td><td>C=C + X₂</td><td>dihaluro vicinal</td><td>CCl₄, 0°C</td></tr>
+<tr><td style="color:var(--acc3)">Hidrogenación</td><td>C=C + H₂</td><td>alcano</td><td>Ni/Pd, presión</td></tr>
+<tr><td style="color:var(--acc3)">Hidratación</td><td>C=C + H₂O</td><td>alcohol</td><td>H₂SO₄ cat.</td></tr>
+<tr><td style="color:var(--acc4)">Oxidación alcohol 1°</td><td>R–CH₂OH + [O]</td><td>aldehído → ác. carb.</td><td>KMnO₄ o K₂Cr₂O₇</td></tr>
+<tr><td style="color:var(--acc4)">Esterificación</td><td>R–COOH + R'–OH</td><td>éster + H₂O</td><td>H₂SO₄, calor</td></tr>
+<tr><td style="color:var(--acc4)">Saponificación</td><td>éster + NaOH</td><td>carboxilato + alcohol</td><td>NaOH, calor</td></tr>
+<tr><td style="color:var(--acc2)">SN2</td><td>R–X + Nu⁻</td><td>R–Nu + X⁻</td><td>1°&gt;2°&gt;3°, backside</td></tr>
+<tr><td style="color:var(--acc2)">E2</td><td>R–X + base</td><td>alqueno + HX</td><td>Base fuerte, Zaitsev</td></tr>
+<tr><td style="color:var(--acc2)">SEAr (nitración)</td><td>C₆H₆ + HNO₃</td><td>C₆H₅NO₂</td><td>H₂SO₄ conc., 50°C</td></tr>
+</table></div></div>
+
+<!-- CONVERSIONES -->
+<div class="page" id="p-conv">
+<div class="card"><div class="ctitle">🔁 CONVERTIDOR DE UNIDADES</div>
+<div class="tbrow">
+  <button class="tb active" onclick="st(this,'cv','tmp')">TEMPERATURA</button>
+  <button class="tb" onclick="st(this,'cv','pre')">PRESIÓN</button>
+  <button class="tb" onclick="st(this,'cv','ene')">ENERGÍA</button>
+  <button class="tb" onclick="st(this,'cv','mas')">MASA</button>
+  <button class="tb" onclick="st(this,'cv','vol')">VOLUMEN</button>
+</div>
+<div class="tc active" id="cv-tmp">
+<div class="g3">
+  <div><label class="lbl">°C</label><input type="number" id="t-c" step="any" oninput="cvT('c')"></div>
+  <div><label class="lbl">K</label><input type="number" id="t-k" step="any" oninput="cvT('k')"></div>
+  <div><label class="lbl">°F</label><input type="number" id="t-f" step="any" oninput="cvT('f')"></div>
+</div></div>
+<div class="tc" id="cv-pre">
+<div class="g3">
+  <div><label class="lbl">atm</label><input type="number" id="p-atm" step="any" oninput="cvP('atm')"></div>
+  <div><label class="lbl">kPa</label><input type="number" id="p-kpa" step="any" oninput="cvP('kpa')"></div>
+  <div><label class="lbl">mmHg</label><input type="number" id="p-mmhg" step="any" oninput="cvP('mmhg')"></div>
+  <div><label class="lbl">bar</label><input type="number" id="p-bar" step="any" oninput="cvP('bar')"></div>
+  <div><label class="lbl">psi</label><input type="number" id="p-psi" step="any" oninput="cvP('psi')"></div>
+  <div><label class="lbl">Pa</label><input type="number" id="p-pa" step="any" oninput="cvP('pa')"></div>
+</div></div>
+<div class="tc" id="cv-ene">
+<div class="g3">
+  <div><label class="lbl">J</label><input type="number" id="e-j" step="any" oninput="cvE('j')"></div>
+  <div><label class="lbl">kJ</label><input type="number" id="e-kj" step="any" oninput="cvE('kj')"></div>
+  <div><label class="lbl">cal</label><input type="number" id="e-cal" step="any" oninput="cvE('cal')"></div>
+  <div><label class="lbl">kcal</label><input type="number" id="e-kcal" step="any" oninput="cvE('kcal')"></div>
+  <div><label class="lbl">eV</label><input type="number" id="e-ev" step="any" oninput="cvE('ev')"></div>
+  <div><label class="lbl">L·atm</label><input type="number" id="e-latm" step="any" oninput="cvE('latm')"></div>
+</div></div>
+<div class="tc" id="cv-mas">
+<div class="g3">
+  <div><label class="lbl">g</label><input type="number" id="m-g" step="any" oninput="cvM('g')"></div>
+  <div><label class="lbl">kg</label><input type="number" id="m-kg" step="any" oninput="cvM('kg')"></div>
+  <div><label class="lbl">mg</label><input type="number" id="m-mg" step="any" oninput="cvM('mg')"></div>
+  <div><label class="lbl">lb</label><input type="number" id="m-lb" step="any" oninput="cvM('lb')"></div>
+  <div><label class="lbl">oz</label><input type="number" id="m-oz" step="any" oninput="cvM('oz')"></div>
+  <div><label class="lbl">u.m.a.</label><input type="number" id="m-uma" step="any" oninput="cvM('uma')"></div>
+</div></div>
+<div class="tc" id="cv-vol">
+<div class="g3">
+  <div><label class="lbl">L</label><input type="number" id="v-l" step="any" oninput="cvV('l')"></div>
+  <div><label class="lbl">mL</label><input type="number" id="v-ml" step="any" oninput="cvV('ml')"></div>
+  <div><label class="lbl">m³</label><input type="number" id="v-m3" step="any" oninput="cvV('m3')"></div>
+  <div><label class="lbl">cm³</label><input type="number" id="v-cm3" step="any" oninput="cvV('cm3')"></div>
+  <div><label class="lbl">fl oz</label><input type="number" id="v-floz" step="any" oninput="cvV('floz')"></div>
+  <div><label class="lbl">galones US</label><input type="number" id="v-gal" step="any" oninput="cvV('gal')"></div>
+</div></div>
+</div></div>
+
+<!-- CONSTANTES -->
+<div class="page" id="p-ctes">
+<div class="card"><div class="ctitle">📐 CONSTANTES FUNDAMENTALES</div>
+<table class="tbl"><tr><th>Constante</th><th>Símbolo</th><th>Valor</th><th>Unidades</th></tr>
+<tr><td>Avogadro</td><td style="color:var(--acc)">Nₐ</td><td style="color:var(--acc3)">6.02214076×10²³</td><td>mol⁻¹</td></tr>
+<tr><td>Gas ideal</td><td style="color:var(--acc)">R</td><td style="color:var(--acc3)">8.31446</td><td>J/(mol·K)</td></tr>
+<tr><td>Gas ideal</td><td style="color:var(--acc)">R</td><td style="color:var(--acc3)">0.082057</td><td>L·atm/(mol·K)</td></tr>
+<tr><td>Faraday</td><td style="color:var(--acc)">F</td><td style="color:var(--acc3)">96485.332</td><td>C/mol</td></tr>
+<tr><td>Carga electrón</td><td style="color:var(--acc)">e</td><td style="color:var(--acc3)">1.60218×10⁻¹⁹</td><td>C</td></tr>
+<tr><td>Masa electrón</td><td style="color:var(--acc)">mₑ</td><td style="color:var(--acc3)">9.10938×10⁻³¹</td><td>kg</td></tr>
+<tr><td>Masa protón</td><td style="color:var(--acc)">mₚ</td><td style="color:var(--acc3)">1.67262×10⁻²⁷</td><td>kg</td></tr>
+<tr><td>Planck</td><td style="color:var(--acc)">h</td><td style="color:var(--acc3)">6.62607×10⁻³⁴</td><td>J·s</td></tr>
+<tr><td>Boltzmann</td><td style="color:var(--acc)">kB</td><td style="color:var(--acc3)">1.38065×10⁻²³</td><td>J/K</td></tr>
+<tr><td>Velocidad luz</td><td style="color:var(--acc)">c</td><td style="color:var(--acc3)">2.99792×10⁸</td><td>m/s</td></tr>
+<tr><td>1 atm</td><td style="color:var(--acc)">—</td><td style="color:var(--acc3)">101325</td><td>Pa = 760 mmHg</td></tr>
+<tr><td>Vol. molar STP</td><td style="color:var(--acc)">Vm</td><td style="color:var(--acc3)">22.414</td><td>L/mol (0°C, 1atm)</td></tr>
+<tr><td>Rydberg</td><td style="color:var(--acc)">R∞</td><td style="color:var(--acc3)">1.09737×10⁷</td><td>m⁻¹</td></tr>
+<tr><td>Radio de Bohr</td><td style="color:var(--acc)">a₀</td><td style="color:var(--acc3)">5.29177×10⁻¹¹</td><td>m</td></tr>
+</table></div></div>
+
+<!-- FORMULARIO -->
+<div class="page" id="p-form">
+<div class="card"><div class="ctitle">📄 FORMULARIO GENERAL</div>
+<div class="g2">
+<div style="padding:12px;background:rgba(0,212,255,0.04);border:1px solid var(--border);border-radius:6px">
+<div style="font-family:var(--fh);font-size:0.6rem;color:var(--acc);letter-spacing:2px;margin-bottom:8px">GASES</div>
+<div style="font-family:var(--fm);font-size:0.71rem;line-height:1.9">PV=nRT<br>P₁V₁/T₁=P₂V₂/T₂<br>(P+an²/V²)(V−nb)=nRT<br>vrms=√(3RT/M)<br>Efusión: r₁/r₂=√(M₂/M₁)</div></div>
+<div style="padding:12px;background:rgba(127,255,0,0.03);border:1px solid var(--border);border-radius:6px">
+<div style="font-family:var(--fh);font-size:0.6rem;color:var(--acc3);letter-spacing:2px;margin-bottom:8px">TERMOQUÍMICA</div>
+<div style="font-family:var(--fm);font-size:0.71rem;line-height:1.9">Q=mcΔT<br>ΔH°rxn=ΣΔH°f(prod)−ΣΔH°f(react)<br>ΔG°=ΔH°−TΔS°<br>ΔG°=−RT·lnK<br>ΔG°=−nFE°</div></div>
+<div style="padding:12px;background:rgba(255,107,53,0.04);border:1px solid var(--border);border-radius:6px">
+<div style="font-family:var(--fh);font-size:0.6rem;color:var(--acc2);letter-spacing:2px;margin-bottom:8px">ÁCIDO-BASE / pH</div>
+<div style="font-family:var(--fm);font-size:0.71rem;line-height:1.9">pH=−log[H⁺]<br>pH+pOH=14 (25°C)<br>Ka·Kb=Kw=10⁻¹⁴<br>pH=pKa+log([A⁻]/[HA])<br>C₁V₁=C₂V₂</div></div>
+<div style="padding:12px;background:rgba(191,95,255,0.04);border:1px solid var(--border);border-radius:6px">
+<div style="font-family:var(--fh);font-size:0.6rem;color:var(--acc4);letter-spacing:2px;margin-bottom:8px">ELECTROQUÍMICA</div>
+<div style="font-family:var(--fm);font-size:0.71rem;line-height:1.9">E°celda=E°cát−E°án<br>ΔG°=−nFE°<br>E=E°−(0.05916/n)logQ<br>m=MIt/(nF)<br>F=96485 C/mol</div></div>
+<div style="padding:12px;background:rgba(255,204,0,0.03);border:1px solid var(--border);border-radius:6px">
+<div style="font-family:var(--fh);font-size:0.6rem;color:var(--acc5);letter-spacing:2px;margin-bottom:8px">CINÉTICA</div>
+<div style="font-family:var(--fm);font-size:0.71rem;line-height:1.9">Ord.0: [A]=[A]₀−kt<br>Ord.1: ln[A]=ln[A]₀−kt<br>Ord.2: 1/[A]=1/[A]₀+kt<br>t₁/₂(1°)=ln2/k<br>k=A·e^(−Ea/RT)</div></div>
+<div style="padding:12px;background:rgba(0,212,255,0.04);border:1px solid var(--border);border-radius:6px">
+<div style="font-family:var(--fh);font-size:0.6rem;color:var(--acc);letter-spacing:2px;margin-bottom:8px">COLIGATIVAS &amp; EQUILIBRIO</div>
+<div style="font-family:var(--fm);font-size:0.71rem;line-height:1.9">ΔTf=−Kf·m·i<br>ΔTb=Kb·m·i<br>π=iMRT<br>Kp=Kc(RT)^Δn<br>Q&lt;K → espontáneo →</div></div>
+</div></div></div>
+
+  </div></div></div>
+<script>
+// ── NAVIGATION ──────────────────────────────────────────────
+const TITLES={tabla:'TABLA PERIÓDICA',config:'CONFIGURACIÓN ELECTRÓNICA',nom:'NOMENCLATURA',
+  redox:'BALANCEO REDOX',estoq:'ESTEQUIOMETRÍA',masas:'MASAS MOLARES',rend:'RENDIMIENTO',
+  gases:'LEYES DE GASES',termo:'TERMOQUÍMICA',cin:'CINÉTICA QUÍMICA',eq:'EQUILIBRIO',
+  ph:'pH & ÁCIDO-BASE',sol:'SOLUCIONES',ksp:'SOLUBILIDAD & Ksp',colig:'PROP. COLIGATIVAS',
+  electroq:'ELECTROQUÍMICA',corr:'CORROSIÓN',grupos:'GRUPOS FUNCIONALES',
+  isomeria:'ISOMERÍA',orgrxn:'REACCIONES ORGÁNICAS',conv:'CONVERSIONES',
+  ctes:'CONSTANTES',form:'FORMULARIO'};
+
+function gp(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const pg=document.getElementById('p-'+name);
+  if(pg)pg.classList.add('active');
+  document.querySelectorAll('.ni').forEach(n=>{
+    if((n.getAttribute('onclick')||'').includes("'"+name+"'"))n.classList.add('active');
+  });
+  document.getElementById('ptitle').textContent=TITLES[name]||name.toUpperCase();
+}
+
+// Sub-tabs: st(buttonElement, group, tab)
+function st(btn,g,t){
+  const card=btn.closest('.card');
+  card.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  card.querySelectorAll('.tc').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  const tc=document.getElementById(g+'-'+t);
+  if(tc)tc.classList.add('active');
+}
+
+// ── CONSTANTS ───────────────────────────────────────────────
+const NA=6.02214076e23, Ratm=0.082057, RJ=8.31446, F_=96485;
+
+// ── ATOMIC MASSES ───────────────────────────────────────────
+const AM={H:1.008,He:4.003,Li:6.941,Be:9.012,B:10.811,C:12.011,N:14.007,O:15.999,F:18.998,Ne:20.18,Na:22.99,Mg:24.305,Al:26.982,Si:28.086,P:30.974,S:32.06,Cl:35.45,Ar:39.948,K:39.098,Ca:40.078,Sc:44.956,Ti:47.867,V:50.942,Cr:51.996,Mn:54.938,Fe:55.845,Co:58.933,Ni:58.693,Cu:63.546,Zn:65.38,Ga:69.723,Ge:72.63,As:74.922,Se:78.971,Br:79.904,Kr:83.798,Rb:85.468,Sr:87.62,Y:88.906,Zr:91.224,Nb:92.906,Mo:95.95,Tc:98,Ru:101.07,Rh:102.906,Pd:106.42,Ag:107.868,Cd:112.411,In:114.818,Sn:118.71,Sb:121.76,Te:127.6,I:126.904,Xe:131.293,Cs:132.905,Ba:137.327,La:138.905,Ce:140.116,Pr:140.908,Nd:144.242,Pm:145,Sm:150.36,Eu:151.964,Gd:157.25,Tb:158.925,Dy:162.5,Ho:164.93,Er:167.259,Tm:168.934,Yb:173.045,Lu:174.967,Hf:178.49,Ta:180.948,W:183.84,Re:186.207,Os:190.23,Ir:192.217,Pt:195.084,Au:196.967,Hg:200.592,Tl:204.38,Pb:207.2,Bi:208.98,Po:209,Ra:226,Ac:227,Th:232.038,Pa:231.036,U:238.029};
+
+// ── FORMULA PARSER ───────────────────────────────────────────
+function parseFx(raw){
+  raw=raw.replace(/\s/g,'').replace(/\d*[+-]$/,'').replace(/^[+-]\d*/,'');
+  function p(s,i){
+    const c={};
+    while(i<s.length){
+      if(s[i]===')'){i++;break;}
+      if(s[i]==='('){
+        const [sub,ni]=p(s,i+1);i=ni;
+        let n='';while(i<s.length&&/\d/.test(s[i]))n+=s[i++];
+        const m=n?+n:1;
+        for(const[k,v]of Object.entries(sub))c[k]=(c[k]||0)+v*m;
+      }else if(/[A-Z]/.test(s[i])){
+        let sym=s[i++];
+        while(i<s.length&&/[a-z]/.test(s[i]))sym+=s[i++];
+        let n='';while(i<s.length&&/\d/.test(s[i]))n+=s[i++];
+        c[sym]=(c[sym]||0)+(n?+n:1);
+      }else i++;
+    }
+    return[c,i];
+  }
+  return p(raw,0)[0];
+}
+
+function getMM(f){
+  const a=parseFx(f);let m=0;
+  for(const[s,n]of Object.entries(a)){if(!AM[s])return null;m+=AM[s]*n;}
+  return m;
+}
+
+function extractCharge(raw){
+  raw=raw.trim();
+  let ch=0,f=raw;
+  const m1=raw.match(/^(.+?)(\d+)([+-])$/);
+  const m2=raw.match(/^(.+?)([+-])(\d*)$/);
+  const m3=raw.match(/^(.+?)\s(\d+)([+-])$/);
+  if(m3){f=m3[1];ch=(m3[3]==='-'?-1:1)*+m3[2];}
+  else if(m1){f=m1[1];ch=(m1[3]==='-'?-1:1)*+m1[2];}
+  else if(m2){f=m2[1];ch=(m2[2]==='-'?-1:1)*(m2[3]?+m2[3]:1);}
+  return{f:f.trim(),ch};
+}
+
+// ── PERIODIC TABLE DATA ──────────────────────────────────────
+const EL=[
+  {n:1,s:"H",nm:"Hidrógeno",m:1.008,c:"non",g:1,p:1,ox:["-1","+1"],cfg:"1s¹"},
+  {n:2,s:"He",nm:"Helio",m:4.003,c:"nob",g:18,p:1,ox:["0"],cfg:"1s²"},
+  {n:3,s:"Li",nm:"Litio",m:6.941,c:"alk",g:1,p:2,ox:["+1"],cfg:"[He]2s¹"},
+  {n:4,s:"Be",nm:"Berilio",m:9.012,c:"ake",g:2,p:2,ox:["+2"],cfg:"[He]2s²"},
+  {n:5,s:"B",nm:"Boro",m:10.811,c:"met",g:13,p:2,ox:["+3"],cfg:"[He]2s²2p¹"},
+  {n:6,s:"C",nm:"Carbono",m:12.011,c:"non",g:14,p:2,ox:["-4","+4"],cfg:"[He]2s²2p²"},
+  {n:7,s:"N",nm:"Nitrógeno",m:14.007,c:"non",g:15,p:2,ox:["-3","+5"],cfg:"[He]2s²2p³"},
+  {n:8,s:"O",nm:"Oxígeno",m:15.999,c:"non",g:16,p:2,ox:["-2"],cfg:"[He]2s²2p⁴"},
+  {n:9,s:"F",nm:"Flúor",m:18.998,c:"hal",g:17,p:2,ox:["-1"],cfg:"[He]2s²2p⁵"},
+  {n:10,s:"Ne",nm:"Neón",m:20.18,c:"nob",g:18,p:2,ox:["0"],cfg:"[He]2s²2p⁶"},
+  {n:11,s:"Na",nm:"Sodio",m:22.99,c:"alk",g:1,p:3,ox:["+1"],cfg:"[Ne]3s¹"},
+  {n:12,s:"Mg",nm:"Magnesio",m:24.305,c:"ake",g:2,p:3,ox:["+2"],cfg:"[Ne]3s²"},
+  {n:13,s:"Al",nm:"Aluminio",m:26.982,c:"pos",g:13,p:3,ox:["+3"],cfg:"[Ne]3s²3p¹"},
+  {n:14,s:"Si",nm:"Silicio",m:28.086,c:"met",g:14,p:3,ox:["+4"],cfg:"[Ne]3s²3p²"},
+  {n:15,s:"P",nm:"Fósforo",m:30.974,c:"non",g:15,p:3,ox:["-3","+5"],cfg:"[Ne]3s²3p³"},
+  {n:16,s:"S",nm:"Azufre",m:32.06,c:"non",g:16,p:3,ox:["-2","+6"],cfg:"[Ne]3s²3p⁴"},
+  {n:17,s:"Cl",nm:"Cloro",m:35.45,c:"hal",g:17,p:3,ox:["-1","+7"],cfg:"[Ne]3s²3p⁵"},
+  {n:18,s:"Ar",nm:"Argón",m:39.948,c:"nob",g:18,p:3,ox:["0"],cfg:"[Ne]3s²3p⁶"},
+  {n:19,s:"K",nm:"Potasio",m:39.098,c:"alk",g:1,p:4,ox:["+1"],cfg:"[Ar]4s¹"},
+  {n:20,s:"Ca",nm:"Calcio",m:40.078,c:"ake",g:2,p:4,ox:["+2"],cfg:"[Ar]4s²"},
+  {n:21,s:"Sc",nm:"Escandio",m:44.956,c:"tra",g:3,p:4,ox:["+3"],cfg:"[Ar]3d¹4s²"},
+  {n:22,s:"Ti",nm:"Titanio",m:47.867,c:"tra",g:4,p:4,ox:["+4"],cfg:"[Ar]3d²4s²"},
+  {n:23,s:"V",nm:"Vanadio",m:50.942,c:"tra",g:5,p:4,ox:["+5"],cfg:"[Ar]3d³4s²"},
+  {n:24,s:"Cr",nm:"Cromo",m:51.996,c:"tra",g:6,p:4,ox:["+3","+6"],cfg:"[Ar]3d⁵4s¹"},
+  {n:25,s:"Mn",nm:"Manganeso",m:54.938,c:"tra",g:7,p:4,ox:["+2","+7"],cfg:"[Ar]3d⁵4s²"},
+  {n:26,s:"Fe",nm:"Hierro",m:55.845,c:"tra",g:8,p:4,ox:["+2","+3"],cfg:"[Ar]3d⁶4s²"},
+  {n:27,s:"Co",nm:"Cobalto",m:58.933,c:"tra",g:9,p:4,ox:["+2","+3"],cfg:"[Ar]3d⁷4s²"},
+  {n:28,s:"Ni",nm:"Níquel",m:58.693,c:"tra",g:10,p:4,ox:["+2"],cfg:"[Ar]3d⁸4s²"},
+  {n:29,s:"Cu",nm:"Cobre",m:63.546,c:"tra",g:11,p:4,ox:["+1","+2"],cfg:"[Ar]3d¹⁰4s¹"},
+  {n:30,s:"Zn",nm:"Zinc",m:65.38,c:"tra",g:12,p:4,ox:["+2"],cfg:"[Ar]3d¹⁰4s²"},
+  {n:31,s:"Ga",nm:"Galio",m:69.723,c:"pos",g:13,p:4,ox:["+3"],cfg:"[Ar]3d¹⁰4s²4p¹"},
+  {n:32,s:"Ge",nm:"Germanio",m:72.63,c:"met",g:14,p:4,ox:["+4"],cfg:"[Ar]3d¹⁰4s²4p²"},
+  {n:33,s:"As",nm:"Arsénico",m:74.922,c:"met",g:15,p:4,ox:["+3","+5"],cfg:"[Ar]3d¹⁰4s²4p³"},
+  {n:34,s:"Se",nm:"Selenio",m:78.971,c:"non",g:16,p:4,ox:["-2","+6"],cfg:"[Ar]3d¹⁰4s²4p⁴"},
+  {n:35,s:"Br",nm:"Bromo",m:79.904,c:"hal",g:17,p:4,ox:["-1","+5"],cfg:"[Ar]3d¹⁰4s²4p⁵"},
+  {n:36,s:"Kr",nm:"Kriptón",m:83.798,c:"nob",g:18,p:4,ox:["0"],cfg:"[Ar]3d¹⁰4s²4p⁶"},
+  {n:37,s:"Rb",nm:"Rubidio",m:85.468,c:"alk",g:1,p:5,ox:["+1"],cfg:"[Kr]5s¹"},
+  {n:38,s:"Sr",nm:"Estroncio",m:87.62,c:"ake",g:2,p:5,ox:["+2"],cfg:"[Kr]5s²"},
+  {n:39,s:"Y",nm:"Itrio",m:88.906,c:"tra",g:3,p:5,ox:["+3"],cfg:"[Kr]4d¹5s²"},
+  {n:40,s:"Zr",nm:"Zirconio",m:91.224,c:"tra",g:4,p:5,ox:["+4"],cfg:"[Kr]4d²5s²"},
+  {n:41,s:"Nb",nm:"Niobio",m:92.906,c:"tra",g:5,p:5,ox:["+5"],cfg:"[Kr]4d⁴5s¹"},
+  {n:42,s:"Mo",nm:"Molibdeno",m:95.95,c:"tra",g:6,p:5,ox:["+6"],cfg:"[Kr]4d⁵5s¹"},
+  {n:43,s:"Tc",nm:"Tecnecio",m:98,c:"tra",g:7,p:5,ox:["+7"],cfg:"[Kr]4d⁵5s²"},
+  {n:44,s:"Ru",nm:"Rutenio",m:101.07,c:"tra",g:8,p:5,ox:["+4"],cfg:"[Kr]4d⁷5s¹"},
+  {n:45,s:"Rh",nm:"Rodio",m:102.906,c:"tra",g:9,p:5,ox:["+3"],cfg:"[Kr]4d⁸5s¹"},
+  {n:46,s:"Pd",nm:"Paladio",m:106.42,c:"tra",g:10,p:5,ox:["+2","+4"],cfg:"[Kr]4d¹⁰"},
+  {n:47,s:"Ag",nm:"Plata",m:107.868,c:"tra",g:11,p:5,ox:["+1"],cfg:"[Kr]4d¹⁰5s¹"},
+  {n:48,s:"Cd",nm:"Cadmio",m:112.411,c:"tra",g:12,p:5,ox:["+2"],cfg:"[Kr]4d¹⁰5s²"},
+  {n:49,s:"In",nm:"Indio",m:114.818,c:"pos",g:13,p:5,ox:["+3"],cfg:"[Kr]4d¹⁰5s²5p¹"},
+  {n:50,s:"Sn",nm:"Estaño",m:118.71,c:"pos",g:14,p:5,ox:["+2","+4"],cfg:"[Kr]4d¹⁰5s²5p²"},
+  {n:51,s:"Sb",nm:"Antimonio",m:121.76,c:"met",g:15,p:5,ox:["+3","+5"],cfg:"[Kr]4d¹⁰5s²5p³"},
+  {n:52,s:"Te",nm:"Teluro",m:127.6,c:"met",g:16,p:5,ox:["+6"],cfg:"[Kr]4d¹⁰5s²5p⁴"},
+  {n:53,s:"I",nm:"Yodo",m:126.904,c:"hal",g:17,p:5,ox:["-1","+7"],cfg:"[Kr]4d¹⁰5s²5p⁵"},
+  {n:54,s:"Xe",nm:"Xenón",m:131.293,c:"nob",g:18,p:5,ox:["0"],cfg:"[Kr]4d¹⁰5s²5p⁶"},
+  {n:55,s:"Cs",nm:"Cesio",m:132.905,c:"alk",g:1,p:6,ox:["+1"],cfg:"[Xe]6s¹"},
+  {n:56,s:"Ba",nm:"Bario",m:137.327,c:"ake",g:2,p:6,ox:["+2"],cfg:"[Xe]6s²"},
+  {n:57,s:"La",nm:"Lantano",m:138.905,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]5d¹6s²"},
+  {n:58,s:"Ce",nm:"Cerio",m:140.116,c:"lan",g:null,p:6,ox:["+3","+4"],cfg:"[Xe]4f¹5d¹6s²"},
+  {n:59,s:"Pr",nm:"Praseodimio",m:140.908,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f³6s²"},
+  {n:60,s:"Nd",nm:"Neodimio",m:144.242,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f⁴6s²"},
+  {n:61,s:"Pm",nm:"Prometio",m:145,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f⁵6s²"},
+  {n:62,s:"Sm",nm:"Samario",m:150.36,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f⁶6s²"},
+  {n:63,s:"Eu",nm:"Europio",m:151.964,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f⁷6s²"},
+  {n:64,s:"Gd",nm:"Gadolinio",m:157.25,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f⁷5d¹6s²"},
+  {n:65,s:"Tb",nm:"Terbio",m:158.925,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f⁹6s²"},
+  {n:66,s:"Dy",nm:"Disprosio",m:162.5,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f¹⁰6s²"},
+  {n:67,s:"Ho",nm:"Holmio",m:164.93,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f¹¹6s²"},
+  {n:68,s:"Er",nm:"Erbio",m:167.259,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f¹²6s²"},
+  {n:69,s:"Tm",nm:"Tulio",m:168.934,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f¹³6s²"},
+  {n:70,s:"Yb",nm:"Iterbio",m:173.045,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f¹⁴6s²"},
+  {n:71,s:"Lu",nm:"Lutecio",m:174.967,c:"lan",g:null,p:6,ox:["+3"],cfg:"[Xe]4f¹⁴5d¹6s²"},
+  {n:72,s:"Hf",nm:"Hafnio",m:178.49,c:"tra",g:4,p:6,ox:["+4"],cfg:"[Xe]4f¹⁴5d²6s²"},
+  {n:73,s:"Ta",nm:"Tántalo",m:180.948,c:"tra",g:5,p:6,ox:["+5"],cfg:"[Xe]4f¹⁴5d³6s²"},
+  {n:74,s:"W",nm:"Wolframio",m:183.84,c:"tra",g:6,p:6,ox:["+6"],cfg:"[Xe]4f¹⁴5d⁴6s²"},
+  {n:75,s:"Re",nm:"Renio",m:186.207,c:"tra",g:7,p:6,ox:["+7"],cfg:"[Xe]4f¹⁴5d⁵6s²"},
+  {n:76,s:"Os",nm:"Osmio",m:190.23,c:"tra",g:8,p:6,ox:["+4"],cfg:"[Xe]4f¹⁴5d⁶6s²"},
+  {n:77,s:"Ir",nm:"Iridio",m:192.217,c:"tra",g:9,p:6,ox:["+4"],cfg:"[Xe]4f¹⁴5d⁷6s²"},
+  {n:78,s:"Pt",nm:"Platino",m:195.084,c:"tra",g:10,p:6,ox:["+2","+4"],cfg:"[Xe]4f¹⁴5d⁹6s¹"},
+  {n:79,s:"Au",nm:"Oro",m:196.967,c:"tra",g:11,p:6,ox:["+1","+3"],cfg:"[Xe]4f¹⁴5d¹⁰6s¹"},
+  {n:80,s:"Hg",nm:"Mercurio",m:200.592,c:"tra",g:12,p:6,ox:["+2"],cfg:"[Xe]4f¹⁴5d¹⁰6s²"},
+  {n:81,s:"Tl",nm:"Talio",m:204.38,c:"pos",g:13,p:6,ox:["+3"],cfg:"[Xe]4f¹⁴5d¹⁰6s²6p¹"},
+  {n:82,s:"Pb",nm:"Plomo",m:207.2,c:"pos",g:14,p:6,ox:["+2","+4"],cfg:"[Xe]4f¹⁴5d¹⁰6s²6p²"},
+  {n:83,s:"Bi",nm:"Bismuto",m:208.98,c:"pos",g:15,p:6,ox:["+3"],cfg:"[Xe]4f¹⁴5d¹⁰6s²6p³"},
+  {n:84,s:"Po",nm:"Polonio",m:209,c:"met",g:16,p:6,ox:["+4"],cfg:"[Xe]4f¹⁴5d¹⁰6s²6p⁴"},
+  {n:85,s:"At",nm:"Astato",m:210,c:"hal",g:17,p:6,ox:["-1"],cfg:"[Xe]4f¹⁴5d¹⁰6s²6p⁵"},
+  {n:86,s:"Rn",nm:"Radón",m:222,c:"nob",g:18,p:6,ox:["0"],cfg:"[Xe]4f¹⁴5d¹⁰6s²6p⁶"},
+  {n:87,s:"Fr",nm:"Francio",m:223,c:"alk",g:1,p:7,ox:["+1"],cfg:"[Rn]7s¹"},
+  {n:88,s:"Ra",nm:"Radio",m:226,c:"ake",g:2,p:7,ox:["+2"],cfg:"[Rn]7s²"},
+  {n:89,s:"Ac",nm:"Actinio",m:227,c:"act",g:null,p:7,ox:["+3"],cfg:"[Rn]6d¹7s²"},
+  {n:90,s:"Th",nm:"Torio",m:232.038,c:"act",g:null,p:7,ox:["+4"],cfg:"[Rn]6d²7s²"},
+  {n:91,s:"Pa",nm:"Protactinio",m:231.036,c:"act",g:null,p:7,ox:["+5"],cfg:"[Rn]5f²6d¹7s²"},
+  {n:92,s:"U",nm:"Uranio",m:238.029,c:"act",g:null,p:7,ox:["+6"],cfg:"[Rn]5f³6d¹7s²"},
+  {n:93,s:"Np",nm:"Neptunio",m:237,c:"act",g:null,p:7,ox:["+5"],cfg:"[Rn]5f⁴6d¹7s²"},
+  {n:94,s:"Pu",nm:"Plutonio",m:244,c:"act",g:null,p:7,ox:["+4"],cfg:"[Rn]5f⁶7s²"},
+  {n:95,s:"Am",nm:"Americio",m:243,c:"act",g:null,p:7,ox:["+3"],cfg:"[Rn]5f⁷7s²"},
+  {n:96,s:"Cm",nm:"Curio",m:247,c:"act",g:null,p:7,ox:["+3"],cfg:"[Rn]5f⁷6d¹7s²"},
+  {n:97,s:"Bk",nm:"Berkelio",m:247,c:"act",g:null,p:7,ox:["+3"],cfg:"[Rn]5f⁹7s²"},
+  {n:98,s:"Cf",nm:"Californio",m:251,c:"act",g:null,p:7,ox:["+3"],cfg:"[Rn]5f¹⁰7s²"},
+  {n:99,s:"Es",nm:"Einstenio",m:252,c:"act",g:null,p:7,ox:["+3"],cfg:"[Rn]5f¹¹7s²"},
+  {n:100,s:"Fm",nm:"Fermio",m:257,c:"act",g:null,p:7,ox:["+3"],cfg:"[Rn]5f¹²7s²"},
+  {n:101,s:"Md",nm:"Mendelevio",m:258,c:"act",g:null,p:7,ox:["+3"],cfg:"[Rn]5f¹³7s²"},
+  {n:102,s:"No",nm:"Nobelio",m:259,c:"act",g:null,p:7,ox:["+2"],cfg:"[Rn]5f¹⁴7s²"},
+  {n:103,s:"Lr",nm:"Lawrencio",m:266,c:"act",g:null,p:7,ox:["+3"],cfg:"[Rn]5f¹⁴7s²7p¹"},
+  {n:104,s:"Rf",nm:"Rutherfordio",m:267,c:"tra",g:4,p:7,ox:["+4"],cfg:"[Rn]5f¹⁴6d²7s²"},
+  {n:105,s:"Db",nm:"Dubnio",m:268,c:"tra",g:5,p:7,ox:["+5"],cfg:"[Rn]5f¹⁴6d³7s²"},
+  {n:106,s:"Sg",nm:"Seaborgio",m:271,c:"tra",g:6,p:7,ox:["+6"],cfg:"[Rn]5f¹⁴6d⁴7s²"},
+  {n:107,s:"Bh",nm:"Bohrio",m:272,c:"tra",g:7,p:7,ox:["+7"],cfg:"[Rn]5f¹⁴6d⁵7s²"},
+  {n:108,s:"Hs",nm:"Hassio",m:277,c:"tra",g:8,p:7,ox:["+8"],cfg:"[Rn]5f¹⁴6d⁶7s²"},
+  {n:109,s:"Mt",nm:"Meitnerio",m:278,c:"unk",g:9,p:7,ox:["?"],cfg:""},
+  {n:110,s:"Ds",nm:"Darmstadtio",m:281,c:"unk",g:10,p:7,ox:["?"],cfg:""},
+  {n:111,s:"Rg",nm:"Röntgenio",m:282,c:"unk",g:11,p:7,ox:["?"],cfg:""},
+  {n:112,s:"Cn",nm:"Copernicio",m:285,c:"tra",g:12,p:7,ox:["+2"],cfg:""},
+  {n:113,s:"Nh",nm:"Nihonio",m:286,c:"unk",g:13,p:7,ox:["?"],cfg:""},
+  {n:114,s:"Fl",nm:"Flerovio",m:289,c:"pos",g:14,p:7,ox:["?"],cfg:""},
+  {n:115,s:"Mc",nm:"Moscovio",m:290,c:"unk",g:15,p:7,ox:["?"],cfg:""},
+  {n:116,s:"Lv",nm:"Livermorio",m:293,c:"unk",g:16,p:7,ox:["?"],cfg:""},
+  {n:117,s:"Ts",nm:"Tenesino",m:294,c:"hal",g:17,p:7,ox:["?"],cfg:""},
+  {n:118,s:"Og",nm:"Oganesón",m:294,c:"nob",g:18,p:7,ox:["?"],cfg:""}
+];
+
+const CNAMES={alk:'Metal Alcalino',ake:'Alcalinotérreo',tra:'Metal Transición',pos:'Metal Post-Trans.',met:'Metaloide',non:'No Metal',hal:'Halógeno',nob:'Gas Noble',lan:'Lantánido',act:'Actínido',unk:'Desconocido'};
+const CCLR={alk:'rgba(255,71,87,0.22)',ake:'rgba(255,107,53,0.2)',tra:'rgba(55,66,250,0.2)',pos:'rgba(46,213,115,0.16)',met:'rgba(255,165,2,0.2)',non:'rgba(30,144,255,0.2)',hal:'rgba(162,155,254,0.2)',nob:'rgba(253,121,168,0.18)',lan:'rgba(0,206,201,0.18)',act:'rgba(108,92,231,0.18)',unk:'rgba(90,90,90,0.18)'};
+
+// ── BUILD PERIODIC TABLE ─────────────────────────────────────
+function buildPT(){
+  // Legend
+  const lgnd=document.getElementById('lgnd');
+  lgnd.innerHTML=Object.entries(CNAMES).map(([k,v])=>`<div class="li"><div class="ld" style="background:${CCLR[k]};border:1px solid rgba(255,255,255,0.2)"></div>${v}</div>`).join('');
+
+  // Build position map: "row,col" -> element
+  const pos={};
+  // Main table elements (have group defined, not lanthanide/actinide f-block)
+  EL.forEach(e=>{
+    if(e.g&&e.c!=='lan'&&e.c!=='act'){
+      pos[`${e.p},${e.g}`]=e;
+    }
+  });
+  // Lanthanides (57-71) in row 9, cols 4-18
+  const lans=EL.filter(e=>e.c==='lan');
+  lans.forEach((e,i)=>pos[`9,${i+4}`]=e);
+  // Actinides (89-103) in row 10, cols 4-18
+  const acts=EL.filter(e=>e.c==='act');
+  acts.forEach((e,i)=>pos[`10,${i+4}`]=e);
+  // Placeholders at row 6,7 col 3
+  pos['6,3']={n:0,s:'*',nm:'Lan →',m:'',c:'lan',cfg:''};
+  pos['7,3']={n:0,s:'*',nm:'Act →',m:'',c:'act',cfg:''};
+
+  const grid=document.getElementById('ptg');
+  let html='';
+  for(let row=1;row<=10;row++){
+    if(row===8){for(let c=1;c<=18;c++)html+='<div></div>';continue;}
+    for(let col=1;col<=18;col++){
+      const e=pos[`${row},${col}`];
+      if(e&&e.n){
+        html+=`<div class="el c-${e.c}" onclick="showEl(${e.n})" title="${e.nm}">
+          <div class="en">${e.n||''}</div>
+          <div class="es">${e.s}</div>
+          <div class="ename">${e.nm}</div>
+          <div class="em">${e.m||''}</div>
+        </div>`;
+      }else{
+        html+='<div></div>';
+      }
+    }
+  }
+  grid.innerHTML=html;
+}
+
+function showEl(n){
+  if(!n)return;
+  const e=EL.find(x=>x.n===n);
+  if(!e)return;
+  const d=document.getElementById('edet');
+  d.style.display='block';
+  const clr=CCLR[e.c]||'#888';
+  const solidClr=clr.replace('rgba','rgb').replace(/,[\d.]+\)$/,')');
+  d.innerHTML=`<div class="edg">
+    <div>
+      <div class="esym" style="color:#00d4ff;text-shadow:0 0 20px rgba(0,212,255,0.5)">${e.s}</div>
+      <div style="text-align:center;font-family:var(--fm);font-size:0.6rem;color:var(--muted);margin-top:3px">Z = ${e.n}</div>
+    </div>
+    <div>
+      <div style="font-size:1.1rem;font-weight:600;margin-bottom:5px">${e.nm}</div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:9px">${CNAMES[e.c]||e.c} — Período ${e.p}, Grupo ${e.g||'f-bloque'}</div>
+      <div class="eprops">
+        <div class="ep"><span class="epk">Masa:</span><span class="epv">${e.m} u</span></div>
+        <div class="ep"><span class="epk">Config.:</span><span class="epv">${e.cfg||'—'}</span></div>
+        <div class="ep"><span class="epk">Estado ox.:</span><span class="epv">${e.ox.join(', ')}</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── CONFIG ELECTRÓNICA ───────────────────────────────────────
+const SUBS=['1s','2s','2p','3s','3p','4s','3d','4p','5s','4d','5p','6s','4f','5d','6p','7s','5f','6d','7p'];
+const SCAP={s:2,p:6,d:10,f:14};
+const SUP='⁰¹²³⁴⁵⁶⁷⁸⁹¹⁰¹¹¹²¹³¹⁴'.split('').reduce((a,c,i)=>{a[i]=c;return a},{});
+const SUPS=[...Array(15)].map((_,i)=>i<=9?String.fromCharCode(0x2070+i)||'⁰':['¹⁰','¹¹','¹²','¹³','¹⁴'][i-10]);
+function cfgStr(Z){
+  let rem=Z;const o={};
+  for(const s of SUBS){if(rem<=0)break;const cap=SCAP[s.slice(-1)];const f=Math.min(rem,cap);if(f>0)o[s]=f;rem-=f;}
+  return Object.entries(o).map(([s,v])=>`${s}${SUPS[v]||v}`).join('');
+}
+function doConf(sym){document.getElementById('cfg-in').value=sym;calcConf();}
+function calcConf(){
+  const raw=document.getElementById('cfg-in').value.trim();
+  const ch=parseInt(document.getElementById('cfg-ch').value)||0;
+  const r=document.getElementById('cfg-r');
+  const e=EL.find(x=>x.s.toLowerCase()===raw.toLowerCase()||x.n===+raw||x.nm.toLowerCase()===raw.toLowerCase());
+  if(!e){r.textContent='⚠ Elemento no encontrado.';return;}
+  const Z=e.n-ch;
+  if(Z<1||Z>118){r.textContent='⚠ Electrones fuera de rango.';return;}
+  let rem=Z;const o={};
+  for(const s of SUBS){if(rem<=0)break;const cap=SCAP[s.slice(-1)];const f=Math.min(rem,cap);if(f>0)o[s]=f;rem-=f;}
+  const cfg=Object.entries(o).map(([s,v])=>`${s}${SUPS[v]||v}`).join('');
+  let out=`══ ${e.nm} (${e.s}), Z=${e.n}`;
+  if(ch!==0)out+=`, Ion ${e.s}${ch>0?ch+'+':Math.abs(ch)+'-'}, e⁻=${Z}`;
+  out+=` ══\n\nConfiguración: ${cfg}\n\nDistribución:\n`;
+  for(const[s,v]of Object.entries(o)){
+    const cap=SCAP[s.slice(-1)];
+    out+=`  ${s.padEnd(4)} [${'█'.repeat(v)}${'░'.repeat(cap-v)}] ${v}/${cap}\n`;
+  }
+  r.textContent=out;
+}
+
+// ── NOMENCLATURA ─────────────────────────────────────────────
+const PREF=['','mono','di','tri','tetra','penta','hexa','hepta','octa','nona','deca'];
+const NONOX={O:'óxido',S:'sulfuro',N:'nitruro',Cl:'cloruro',Br:'bromuro',I:'yoduro',F:'fluoruro',P:'fosfuro',C:'carburo'};
+function lnom(f){document.getElementById('nom-in').value=f;calcNom();}
+function calcNom(){
+  const raw=document.getElementById('nom-in').value.trim();
+  const r=document.getElementById('nom-r');
+  if(!raw){r.textContent='Ingresa una fórmula.';return;}
+  const a=parseFx(raw);const syms=Object.keys(a);
+  if(syms.length!==2){r.textContent=`⚠ Solo compuestos binarios (2 elementos). Encontré: ${syms.join(', ')}`;return;}
+  const[A,B]=syms;const nA=a[A],nB=a[B];
+  const mm=getMM(raw);
+  let out=`══ ${raw} ══\nMasa molar: ${mm?mm.toFixed(4)+' g/mol':'desconocida'}\n\n`;
+  // IUPAC sistemática
+  const eA=EL.find(e=>e.s===A);const eB=EL.find(e=>e.s===B);
+  const pA=nA>1?PREF[nA]:'';const pB=nB>1?PREF[nB]:'';
+  const nAn=(eA?eA.nm:A).toLowerCase();
+  const nBn=NONOX[B]?NONOX[B]:((eB?eB.nm:B).toLowerCase()+'uro');
+  out+=`Sistemática (prefijos IUPAC):\n  ${pA}${nAn} ${pB}${nBn}\n\n`;
+  // Stock si metal
+  const metales=['Li','Na','K','Rb','Cs','Fr','Be','Mg','Ca','Sr','Ba','Ra','Al','Zn','Ag','Au','Cu','Fe','Pb','Sn','Cr','Mn','Co','Ni','Ti','V','Bi'];
+  if(metales.includes(A)&&B==='O'){
+    const noA=(2*nB)/nA;
+    out+=`Stock (óxido):\n  óxido de ${eA?eA.nm:A}(${noA>0?'+'+noA:noA})\n`;
+  }else if(metales.includes(A)){
+    const fixB={O:-2,S:-2,N:-3,Cl:-1,Br:-1,I:-1,F:-1};
+    if(fixB[B]!==undefined){
+      const noA=(-fixB[B]*nB)/nA;
+      out+=`Stock:\n  ${NONOX[B]||B} de ${eA?eA.nm:A}(${noA>0?'+'+noA:noA})\n`;
+    }
+  }
+  if(A==='H'){
+    const hidr=NONOX[B]?NONOX[B].replace(/uro$/,'hídrico'):(eB?eB.nm:B).toLowerCase()+'hídrico';
+    out+=`Como ácido:\n  ácido ${hidr} (en solución acuosa)`;
+  }
+  r.textContent=out;
+}
+
+// ── MASAS MOLARES ────────────────────────────────────────────
+function lmm(f){document.getElementById('mm-in').value=f;calcMM();}
+function calcMM(){
+  const raw=document.getElementById('mm-in').value.trim();
+  const r=document.getElementById('mm-r');
+  if(!raw){r.textContent='Ingresa una fórmula.';return;}
+  const a=parseFx(raw);const mm=getMM(raw);
+  if(!mm){r.textContent='⚠ Fórmula inválida o elemento desconocido.';return;}
+  let out=`══ ${raw} ══\n\n`;
+  for(const[sym,cnt]of Object.entries(a)){
+    const am=AM[sym]||0;const contrib=am*cnt;
+    out+=`  ${sym.padEnd(4)} ×${String(cnt).padStart(3)} = ${contrib.toFixed(4).padStart(11)} g/mol  (${(contrib/mm*100).toFixed(2)}%)\n`;
+  }
+  out+=`  ${'─'.repeat(38)}\n  M = ${mm.toFixed(4)} g/mol\n\n`;
+  out+=`1 mol = ${mm.toFixed(4)} g = ${NA.toExponential(4)} moléculas\n`;
+  out+=`1 g   = ${(1/mm).toExponential(4)} mol = ${(NA/mm).toExponential(4)} moléculas`;
+  r.textContent=out;
+}
+
+// ── ESTEQUIOMETRÍA ───────────────────────────────────────────
+let ESQ=[],ESQ_IDX=0;
+function lesq(eq){document.getElementById('esq-in').value=eq;parseEsq();}
+function parseSp(str,side){
+  return str.split('+').map(t=>{
+    t=t.trim();const m=t.match(/^(\d+(?:\.\d+)?)\s*(.+)$/);
+    const coef=m?+m[1]:1;const formula=(m?m[2]:t).trim();
+    const{f}=extractCharge(formula);
+    return{formula,cleanF:f,coef,side,mm:getMM(f)};
+  });
+}
+function parseEsq(){
+  const raw=document.getElementById('esq-in').value.trim();
+  const r=document.getElementById('esq-r');
+  const sep=raw.includes('->')?'->':raw.includes('→')?'→':null;
+  if(!sep){r.textContent='⚠ Usa -> como flecha.';return;}
+  const[l,p]=raw.split(sep).map(s=>s.trim());
+  ESQ=[...parseSp(l,'R'),...parseSp(p,'P')];ESQ_IDX=0;
+  const cd=document.getElementById('esq-cards');cd.innerHTML='';
+  ESQ.forEach((sp,i)=>{
+    const clr=sp.side==='R'?'var(--acc2)':'var(--acc)';
+    const d=document.createElement('div');
+    d.style.cssText=`padding:7px 12px;border:2px solid ${clr}44;border-radius:6px;cursor:pointer;background:${clr}11;font-family:var(--fm);font-size:0.76rem;transition:all 0.2s`;
+    d.innerHTML=`<div style="color:${clr};font-weight:700">${sp.coef>1?sp.coef:''}${sp.formula}</div><div style="font-size:0.6rem;color:var(--muted)">${sp.side==='R'?'Reactivo':'Producto'} | ${sp.mm?sp.mm.toFixed(3):'?'} g/mol</div>`;
+    d.onclick=()=>{document.querySelectorAll('#esq-cards>div').forEach(x=>x.style.borderWidth='2px');d.style.borderWidth='3px';ESQ_IDX=i;};
+    if(i===0)d.style.borderWidth='3px';
+    cd.appendChild(d);
+  });
+  document.getElementById('esq-sp').style.display='block';
+  r.textContent=`✓ ${ESQ.length} especies. Selecciona referencia y cantidad.`;
+}
+function calcEsq(){
+  const r=document.getElementById('esq-r');
+  const cant=+document.getElementById('esq-cant').value;
+  const unit=document.getElementById('esq-unit').value;
+  if(!cant||cant<=0){r.textContent='⚠ Ingresa cantidad.';return;}
+  const ref=ESQ[ESQ_IDX];if(!ref.mm){r.textContent='⚠ Masa molar desconocida.';return;}
+  let mol;
+  if(unit==='g')mol=cant/ref.mm;
+  else if(unit==='mol')mol=cant;
+  else if(unit==='kg')mol=cant*1000/ref.mm;
+  else if(unit==='mg')mol=cant/1000/ref.mm;
+  else if(unit==='L')mol=cant/22.414;
+  else mol=cant/NA;
+  const base=mol/ref.coef;
+  let out=`══ ESTEQUIOMETRÍA ══\nReferencia: ${ref.coef>1?ref.coef:''}${ref.formula} | M=${ref.mm.toFixed(4)} g/mol\nDado: ${cant} ${unit} → ${mol.toExponential(4)} mol\n\n`;
+  ESQ.forEach(sp=>{
+    const m=sp===ref?mol:base*sp.coef;
+    const g=m*(sp.mm||0);
+    out+=`${sp.coef>1?sp.coef:''}${sp.formula.padEnd(12)} ${m.toExponential(4)} mol  =  ${g.toExponential(4)} g\n`;
+  });
+  const mR=ESQ.filter(s=>s.side==='R').reduce((s,sp)=>s+(base*sp.coef*(sp.mm||0)),0);
+  const mP=ESQ.filter(s=>s.side==='P').reduce((s,sp)=>s+(base*sp.coef*(sp.mm||0)),0);
+  out+=`\nΣ masa reactivos: ${mR.toExponential(4)} g\nΣ masa productos: ${mP.toExponential(4)} g`;
+  out+=Math.abs(mR-mP)<0.01*mR?'\n✓ Se conserva la masa':'\n⚠ Revisar conservación de masa';
+  r.textContent=out;
+}
+
+// ── RENDIMIENTO ──────────────────────────────────────────────
+let REND=[];
+function parseRend(){
+  const raw=document.getElementById('rend-eq').value.trim();
+  const r=document.getElementById('rend-r');
+  const sep=raw.includes('->')?'->':raw.includes('→')?'→':null;
+  if(!sep){r.textContent='Usa ->';return;}
+  const[l,p]=raw.split(sep).map(s=>s.trim());
+  REND=[...parseSp(l,'R'),...parseSp(p,'P')];
+  const cont=document.getElementById('rend-ri');
+  const reacts=REND.filter(s=>s.side==='R');
+  cont.innerHTML='<div style="font-size:0.6rem;color:var(--acc);letter-spacing:2px;margin-bottom:6px">MASA DE REACTIVOS (g):</div><div class="g3">'+
+    reacts.map((sp,i)=>`<div><label class="lbl">${sp.coef>1?sp.coef:''}${sp.formula} (g)</label><input type="number" id="rend-m${i}" step="any" min="0"></div>`).join('')+'</div>';
+  document.getElementById('rend-ps').innerHTML=REND.filter(s=>s.side==='P').map(s=>`<option>${s.coef>1?s.coef:''}${s.formula}</option>`).join('');
+  r.textContent='✓ Ingresa masas de reactivos y calcula.';
+}
+function calcRend(){
+  const r=document.getElementById('rend-r');
+  const reacts=REND.filter(s=>s.side==='R');
+  const prodName=document.getElementById('rend-ps').value;
+  const prod=REND.find(s=>s.formula===prodName||`${s.coef>1?s.coef:''}${s.formula}`===prodName);
+  if(!prod){r.textContent='⚠ Analiza la ecuación primero.';return;}
+  let lim=null,minBase=Infinity;
+  const masses=reacts.map((sp,i)=>+document.getElementById('rend-m'+i)?.value||0);
+  reacts.forEach((sp,i)=>{
+    if(!sp.mm||!masses[i])return;
+    const base=(masses[i]/sp.mm)/sp.coef;
+    if(base<minBase){minBase=base;lim=sp;}
+  });
+  if(!lim){r.textContent='⚠ Ingresa masas de reactivos.';return;}
+  const molProd=minBase*prod.coef;
+  const masaTeo=molProd*(prod.mm||0);
+  const masaExp=+document.getElementById('rend-exp').value||0;
+  let out=`══ REACTIVO LIMITANTE ══\nLimitante: ${lim.formula} (base=${minBase.toExponential(4)} mol)\n\n`;
+  reacts.forEach((sp,i)=>{
+    if(!masses[i])return;
+    const b=(masses[i]/sp.mm)/sp.coef;
+    out+=`${sp.formula}: ${masses[i]}g → base=${b.toExponential(3)} mol ${sp===lim?'← LIMITANTE':'(exceso)'}\n`;
+  });
+  out+=`\nProducto: ${prod.coef>1?prod.coef:''}${prod.formula}\nMasa teórica: ${masaTeo.toExponential(4)} g`;
+  if(masaExp>0)out+=`\nMasa experimental: ${masaExp} g\n% Rendimiento = ${(masaExp/masaTeo*100).toFixed(2)}%`;
+  r.textContent=out;
+}
+
+// ── GASES ────────────────────────────────────────────────────
+function calcGI(){
+  const P=+document.getElementById('gi-P').value||NaN,V=+document.getElementById('gi-V').value||NaN,n=+document.getElementById('gi-n').value||NaN;
+  const Tc=document.getElementById('gi-T').value,T=Tc!==''?(+Tc+273.15):NaN;
+  const r=document.getElementById('gi-r');let out='PV = nRT\n\n';
+  const miss=[isNaN(P)?'P':null,isNaN(V)?'V':null,isNaN(n)?'n':null,isNaN(T)?'T':null].filter(Boolean);
+  if(miss.length!==1){r.textContent='Deja exactamente un campo vacío.';return;}
+  if(miss[0]==='P'){const p=n*Ratm*T/V;document.getElementById('gi-P').value=p.toFixed(5);out+=`P = nRT/V = ${p.toFixed(5)} atm`;}
+  else if(miss[0]==='V'){const v=n*Ratm*T/P;document.getElementById('gi-V').value=v.toFixed(5);out+=`V = nRT/P = ${v.toFixed(5)} L`;}
+  else if(miss[0]==='n'){const nm=P*V/(Ratm*T);document.getElementById('gi-n').value=nm.toFixed(6);out+=`n = PV/RT = ${nm.toFixed(6)} mol`;}
+  else{const tk=P*V/(n*Ratm);document.getElementById('gi-T').value=(tk-273.15).toFixed(3);out+=`T = PV/nR = ${tk.toFixed(3)} K = ${(tk-273.15).toFixed(3)} °C`;}
+  r.textContent=out;
+}
+function calcCharles(){const V1=+document.getElementById('ch-V1').value,T1=+document.getElementById('ch-T1').value+273.15,T2=+document.getElementById('ch-T2').value+273.15;document.getElementById('ch-V2').value=(V1*T2/T1).toFixed(5);}
+function calcGL(){const P1=+document.getElementById('gl-P1').value,T1=+document.getElementById('gl-T1').value+273.15,T2=+document.getElementById('gl-T2').value+273.15;document.getElementById('gl-P2').value=(P1*T2/T1).toFixed(5);}
+function calcComb(){const P1=+document.getElementById('cb-P1').value,V1=+document.getElementById('cb-V1').value,T1=+document.getElementById('cb-T1').value+273.15,P2=+document.getElementById('cb-P2').value,T2=+document.getElementById('cb-T2').value+273.15;document.getElementById('cb-V2').value=(P1*V1*T2/(T1*P2)).toFixed(5);}
+function setVdw(){const v=document.getElementById('vdw-g').value.split(',');document.getElementById('vdw-a').value=v[0];document.getElementById('vdw-b').value=v[1];}
+function calcVdw(){const n=+document.getElementById('vdw-n').value,T=+document.getElementById('vdw-T').value+273.15,V=+document.getElementById('vdw-V').value,a=+document.getElementById('vdw-a').value,b=+document.getElementById('vdw-b').value;if(n&&T&&V&&a&&b)document.getElementById('vdw-P').value=((n*Ratm*T/(V-n*b))-(a*n*n/(V*V))).toFixed(5);}
+function calcDalton(){const ns=[1,2,3,4,5].map(i=>+document.getElementById('d-n'+i).value||0);const Pt=+document.getElementById('d-Pt').value||1;const tot=ns.reduce((a,b)=>a+b,0);if(!tot){document.getElementById('d-r').textContent='Ingresa moles.';return;}let out=`ntotal=${tot.toFixed(4)} mol\n\n`;ns.forEach((n,i)=>{if(n>0)out+=`Gas ${i+1}: n=${n} mol, x=${(n/tot).toFixed(4)}, P=${(n/tot*Pt).toFixed(5)} atm\n`;});document.getElementById('d-r').textContent=out+`\nPtotal = ${Pt} atm`;}
+
+// ── TERMOQUÍMICA ─────────────────────────────────────────────
+const DHF={H2O:-285.8,'H2O(g)':-241.8,CO2:-393.5,CO:-110.5,CH4:-74.87,C2H5OH:-277.7,C6H12O6:-1274.4,NH3:-46.19,CaO:-635.5,CaCO3:-1207.1,Fe2O3:-824.2,HCl:-92.31,SO2:-296.9,SO3:-395.2,NO:90.37,NO2:33.84,C6H6:49.0,C3H8:-103.8,H2:0,O2:0,N2:0,C:0,Fe:0,Ca:0,S:0,Al:0,Na:0};
+function calcCal(){
+  const m=+document.getElementById('tq-m').value;
+  const c=+document.getElementById('tq-c').value||+document.getElementById('tq-cs').value;
+  const Ti=+document.getElementById('tq-Ti').value,Tf=+document.getElementById('tq-Tf').value;
+  if(m&&c&&!isNaN(Ti)&&!isNaN(Tf))document.getElementById('tq-Q').value=(m*c*(Tf-Ti)).toFixed(3);
+}
+function lhess(eq){document.getElementById('hess-in').value=eq;calcHess();}
+function calcHess(){
+  const raw=document.getElementById('hess-in').value.trim();
+  const r=document.getElementById('hess-r');
+  const sep=raw.includes('->')?'->':raw.includes('→')?'→':null;
+  if(!sep){r.textContent='Usa ->';return;}
+  const[l,p]=raw.split(sep).map(s=>s.trim());
+  const all=[...parseSp(l,'R'),...parseSp(p,'P')];
+  let sumP=0,sumR=0,missing=[];let out='ΔH°rxn = Σ ΔH°f(prod) − Σ ΔH°f(react)\n\n';
+  all.forEach(sp=>{
+    const dh=DHF[sp.formula];
+    if(dh===undefined){missing.push(sp.formula);return;}
+    if(sp.side==='P'){sumP+=sp.coef*dh;out+=`  Prod ${sp.coef}×${sp.formula}: ${(sp.coef*dh).toFixed(2)} kJ\n`;}
+    else{sumR+=sp.coef*dh;out+=`  React ${sp.coef}×${sp.formula}: ${(sp.coef*dh).toFixed(2)} kJ\n`;}
+  });
+  if(missing.length){out+=`\n⚠ ΔH°f desconocido: ${missing.join(', ')} (consulta tabla)`;r.textContent=out;return;}
+  const dH=sumP-sumR;
+  out+=`\nΔH°rxn = ${sumP.toFixed(2)} − ${sumR.toFixed(2)} = ${dH.toFixed(2)} kJ/mol\n`;
+  out+=dH<0?'→ EXOTÉRMICA ♨ (libera calor)':dH>0?'→ ENDOTÉRMICA ❄ (absorbe calor)':'→ Termoneural';
+  r.textContent=out;
+}
+function calcGibbs(){
+  const dH=+document.getElementById('gb-dH').value,dS=+document.getElementById('gb-dS').value,T=+document.getElementById('gb-T').value+273.15;
+  const r=document.getElementById('gb-r');
+  if(isNaN(dH)||isNaN(dS)){r.textContent='Ingresa ΔH° y ΔS°.';return;}
+  const dG=dH-T*(dS/1000);
+  const K=Math.exp(-dG*1000/(RJ*T));
+  let out=`ΔG° = ΔH° − TΔS° = ${dH} − ${T.toFixed(2)}×${(dS/1000).toFixed(5)}\nΔG° = ${dG.toFixed(3)} kJ/mol\n\n`;
+  out+=dG<0?'→ Proceso ESPONTÁNEO (ΔG° < 0)':dG>0?'→ NO espontáneo (ΔG° > 0)':'→ En equilibrio (ΔG° = 0)';
+  out+=`\n\nK = e^(−ΔG°/RT) = ${K.toExponential(4)}`;
+  r.textContent=out;
+}
+
+// ── CINÉTICA ─────────────────────────────────────────────────
+function calcCin(){
+  const ord=+document.getElementById('cin-ord-s').value,k=+document.getElementById('cin-k').value,A0=+document.getElementById('cin-A0').value,t=+document.getElementById('cin-t').value;
+  const r=document.getElementById('cin-r');
+  if(!k||!A0||!t){r.textContent='Ingresa k, [A]₀ y t.';return;}
+  let A,t12;
+  if(ord===0){A=A0-k*t;t12=A0/(2*k);}
+  else if(ord===1){A=A0*Math.exp(-k*t);t12=Math.LN2/k;}
+  else{A=1/(1/A0+k*t);t12=1/(k*A0);}
+  r.textContent=`Orden ${ord}: [A](${t}s) = ${A.toExponential(5)} M\nt₁/₂ = ${t12.toFixed(5)} s\n${A<0?'⚠ Reactivo agotado':''}\n% restante = ${(A/A0*100).toFixed(2)}%`;
+}
+function calcArr(){
+  const k1=+document.getElementById('arr-k1').value,T1=+document.getElementById('arr-T1').value+273.15,k2v=document.getElementById('arr-k2').value,T2=+document.getElementById('arr-T2').value+273.15,Eav=document.getElementById('arr-Ea').value;
+  const r=document.getElementById('arr-r');
+  if(!k1||!T1||!T2){r.textContent='Ingresa k₁, T₁ y T₂.';return;}
+  if(Eav){
+    const Ea=+Eav*1000;
+    const k2=k1*Math.exp(Ea/RJ*(1/T1-1/T2));
+    r.textContent=`k₂ = k₁·e^(Ea/R·(1/T₁−1/T₂))\nk₂ = ${k2.toExponential(4)}`;
+  }else if(k2v){
+    const k2=+k2v;
+    const Ea=RJ*Math.log(k2/k1)/(1/T1-1/T2);
+    r.textContent=`Ea = R·ln(k₂/k₁)/(1/T₁−1/T₂)\nEa = ${(Ea/1000).toFixed(3)} kJ/mol`;
+  }else r.textContent='Ingresa k₂ o Ea para calcular el otro.';
+}
+function calcVM(){
+  let k=+document.getElementById('vm-k').value||0,t12=+document.getElementById('vm-t').value||0;
+  const n=+document.getElementById('vm-n').value,A0=+document.getElementById('vm-A0').value;
+  const r=document.getElementById('vm-r');
+  if(!k&&t12)k=Math.LN2/t12;
+  if(!t12&&k)t12=Math.LN2/k;
+  if(!k){r.textContent='Ingresa k o t₁/₂.';return;}
+  let out=`k = ${k.toExponential(4)} s⁻¹\nt₁/₂ = ${t12.toFixed(4)} s\n`;
+  if(n&&A0){const A=A0*Math.pow(0.5,n);out+=`\nDespués de ${n} vidas medias (t=${(n*t12).toFixed(2)}s):\n[A] = ${A0}×(½)^${n} = ${A.toExponential(4)}\n% restante = ${(Math.pow(0.5,n)*100).toFixed(3)}%`;}
+  r.textContent=out;
+}
+
+// ── EQUILIBRIO ───────────────────────────────────────────────
+function calcKc(){
+  const rR=document.getElementById('kc-r').value,pR=document.getElementById('kc-p').value;
+  const T=+document.getElementById('kc-T').value+273.15,dn=+document.getElementById('kc-dn').value||0;
+  const r=document.getElementById('kc-r'+''.replace('kc-r','')+'kc-r');
+  // Actually use id kc-r which is the result box
+  const res=document.getElementById('kc-r');
+  const parse=s=>s.split(';').map(t=>{const p=t.trim().split(':');return{name:p[0].trim(),coef:+p[1]||1,conc:+p[2]||0};});
+  try{
+    const rs=parse(rR),ps=parse(pR);
+    let num=ps.reduce((a,s)=>a*Math.pow(s.conc,s.coef),1);
+    let den=rs.reduce((a,s)=>a*Math.pow(s.conc,s.coef),1);
+    const Kc=num/den;const Kp=Kc*Math.pow(Ratm*T,dn);
+    let out=`Kc = ${num.toExponential(4)} / ${den.toExponential(4)} = ${Kc.toExponential(4)}\nKp = Kc·(RT)^${dn} = ${Kp.toExponential(4)}\n\n`;
+    out+=Kc>1e3?'→ Equilibrio → PRODUCTOS (K>>1)':Kc<1e-3?'→ Equilibrio → REACTIVOS (K<<1)':'→ Equilibrio intermedio';
+    res.textContent=out;
+  }catch(e){res.textContent='Formato: especie:coef:conc ; especie2:coef2:conc2';}
+}
+function calcQ(){
+  const Q=+document.getElementById('qr-Q').value,K=+document.getElementById('qr-K').value;
+  const r=document.getElementById('qr-r');
+  let out=`Q = ${Q.toExponential(4)}\nK = ${K.toExponential(4)}\n\n`;
+  if(Math.abs(Q-K)/K<0.001)out+='Q ≈ K → Sistema en EQUILIBRIO';
+  else if(Q<K)out+='Q < K → Reacción avanza hacia PRODUCTOS →';
+  else out+='Q > K → Reacción avanza hacia REACTIVOS ←';
+  r.textContent=out;
+}
+function calcICF(){
+  const A0=+document.getElementById('icf-A0').value,P0=+document.getElementById('icf-P0').value||0;
+  const K=+document.getElementById('icf-K').value,a=+document.getElementById('icf-a').value||1,c=+document.getElementById('icf-c').value||2;
+  const r=document.getElementById('icf-r');
+  if(!A0||!K){r.textContent='Ingresa [A]₀ y Kc.';return;}
+  // Bisection: Kc = (P0+c*x)^c / (A0-a*x)^a
+  let lo=0,hi=A0/a*0.9999;
+  for(let i=0;i<100;i++){
+    const m=(lo+hi)/2;
+    const q=Math.pow(Math.max(P0+c*m,0),c)/Math.pow(Math.max(A0-a*m,1e-30),a);
+    if(q<K)lo=m;else hi=m;
+  }
+  const x=(lo+hi)/2;const Af=A0-a*x,Pf=P0+c*x;
+  r.textContent=`x = ${x.toExponential(5)}\n\nEspecie | Inicial | Cambio    | Final\nA (${a})  | ${A0}    | −${(a*x).toExponential(3)} | ${Af.toExponential(5)}\nProd(${c}) | ${P0}    | +${(c*x).toExponential(3)} | ${Pf.toExponential(5)}\n\nVerif. Kc ≈ ${(Math.pow(Pf,c)/Math.pow(Af,a)).toExponential(4)} (esperado ${K})`;
+}
+
+// ── pH ───────────────────────────────────────────────────────
+function calcPH(){
+  const tipo=document.getElementById('ph-tipo').value,C=+document.getElementById('ph-C').value,Ka=+document.getElementById('ph-K').value;
+  const r=document.getElementById('ph-r');
+  if(!C||C<=0){r.textContent='Ingresa concentración.';return;}
+  let pH;
+  if(tipo==='sa')pH=-Math.log10(C);
+  else if(tipo==='sb')pH=14+Math.log10(C);
+  else if(tipo==='wa'){if(!Ka){r.textContent='Ingresa Ka.';return;}pH=-Math.log10(Math.sqrt(Ka*C));}
+  else{if(!Ka){r.textContent='Ingresa Kb.';return;}pH=14+Math.log10(Math.sqrt(Ka*C));}
+  const pOH=14-pH,H=Math.pow(10,-pH),OH=Math.pow(10,-pOH);
+  let out=`pH  = ${pH.toFixed(4)}\npOH = ${pOH.toFixed(4)}\n[H⁺]  = ${H.toExponential(4)} M\n[OH⁻] = ${OH.toExponential(4)} M\n\n`;
+  if(tipo==='wa')out+=`% disoc. = ${(H/C*100).toFixed(3)}%\n`;
+  out+=pH<7?'→ Solución ÁCIDA':pH>7?'→ Solución BÁSICA':'→ Solución NEUTRA';
+  r.textContent=out;
+}
+function calcBuf(){
+  const Ka=+document.getElementById('buf-Ka').value,Ha=+document.getElementById('buf-Ha').value,A=+document.getElementById('buf-A').value;
+  const r=document.getElementById('buf-r');
+  if(!Ka||!Ha||!A){r.textContent='Ingresa Ka, [HA] y [A⁻].';return;}
+  const pKa=-Math.log10(Ka),pH=pKa+Math.log10(A/Ha);
+  r.textContent=`pH = pKa + log([A⁻]/[HA])\npH = ${pKa.toFixed(4)} + ${Math.log10(A/Ha).toFixed(4)}\npH = ${pH.toFixed(4)}\n\nRango buffer: ${(pKa-1).toFixed(2)} – ${(pKa+1).toFixed(2)}`;
+}
+function drawTit(){
+  const Va=+document.getElementById('tit-Va').value||25;
+  const Ca=+document.getElementById('tit-Ca').value||0.1;
+  const Cb=+document.getElementById('tit-Cb').value||0.1;
+  const tipo=document.getElementById('tit-tipo').value;
+  const Ka=+document.getElementById('tit-Ka').value||1e-5;
+  const Veq=Va*Ca/Cb;
+  const canvas=document.getElementById('tit-canvas');
+  const ctx=canvas.getContext('2d');const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#030609';ctx.fillRect(0,0,W,H);
+  const pts=[];
+  for(let Vb=0;Vb<=Veq*2;Vb+=Veq/100){
+    const na=Ca*Va/1000,nb=Cb*Vb/1000,Vt=(Va+Vb)/1000;
+    let pH=7;const d=na-nb;
+    if(tipo==='sa-sb'){
+      if(Math.abs(d)<1e-10)pH=7;
+      else if(d>0)pH=-Math.log10(d/Vt);
+      else pH=14+Math.log10(-d/Vt);
+    }else{
+      if(nb<na){const Ha=na-nb,Ac=nb;pH=Ha<1e-15?2:(-Math.log10(Ka)+Math.log10(Ac/Ha));}
+      else if(nb>na)pH=14+Math.log10((nb-na)/Vt);
+      else pH=0.5*(14-Math.log10(Ka));
+    }
+    pts.push({Vb,pH:Math.max(0,Math.min(14,pH))});
+  }
+  const pad={l:38,r:12,t:12,b:30};
+  const gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+  const toX=v=>pad.l+v/(Veq*2)*gW,toY=ph=>pad.t+(14-ph)/14*gH;
+  ctx.strokeStyle='rgba(0,212,255,0.12)';ctx.lineWidth=1;
+  for(let ph=0;ph<=14;ph+=2){ctx.beginPath();ctx.moveTo(pad.l,toY(ph));ctx.lineTo(W-pad.r,toY(ph));ctx.stroke();}
+  ctx.strokeStyle='rgba(0,212,255,0.35)';
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,H-pad.b);ctx.lineTo(W-pad.r,H-pad.b);ctx.stroke();
+  ctx.fillStyle='rgba(0,212,255,0.5)';ctx.font='9px Space Mono,monospace';
+  for(let ph=0;ph<=14;ph+=2)ctx.fillText(ph,4,toY(ph)+3);
+  ctx.strokeStyle='#00d4ff';ctx.lineWidth=2;ctx.beginPath();
+  pts.forEach((p,i)=>i===0?ctx.moveTo(toX(p.Vb),toY(p.pH)):ctx.lineTo(toX(p.Vb),toY(p.pH)));
+  ctx.stroke();
+  ctx.strokeStyle='rgba(255,107,53,0.6)';ctx.setLineDash([4,4]);ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(toX(Veq),pad.t);ctx.lineTo(toX(Veq),H-pad.b);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#ff6b35';ctx.font='9px Space Mono';ctx.fillText(`Ve=${Veq.toFixed(1)}mL`,toX(Veq)+2,pad.t+10);
+}
+
+// ── SOLUCIONES ───────────────────────────────────────────────
+function calcConc(){
+  const ms=+document.getElementById('sc-ms').value,MM=+document.getElementById('sc-MM').value,msolv=+document.getElementById('sc-msolv').value,V=+document.getElementById('sc-V').value;
+  const r=document.getElementById('sc-r');
+  let out='';const mol=ms&&MM?ms/MM:NaN;
+  if(!isNaN(mol))out+=`n = ${mol.toExponential(4)} mol\n`;
+  if(!isNaN(mol)&&V)out+=`Molaridad M = ${(mol/(V/1000)).toFixed(5)} mol/L\n`;
+  if(!isNaN(mol)&&msolv)out+=`Molalidad m = ${(mol/(msolv/1000)).toFixed(5)} mol/kg\n`;
+  if(ms&&msolv)out+=`% masa = ${(ms/(ms+msolv)*100).toFixed(4)}%\n`;
+  if(!isNaN(mol)&&V)out+=`ppm ≈ ${(ms/(V/1000)*1000).toFixed(2)} mg/L`;
+  r.textContent=out||'Ingresa datos.';
+}
+function calcDil(){
+  const C1=document.getElementById('dil-C1').value,V1=document.getElementById('dil-V1').value,C2=document.getElementById('dil-C2').value,V2=document.getElementById('dil-V2').value;
+  const r=document.getElementById('dil-r');
+  const miss=[!C1,!V1,!C2,!V2];const idx=miss.indexOf(true);
+  if(miss.filter(Boolean).length!==1){r.textContent='Deja exactamente uno vacío.';return;}
+  if(idx===0){const v=+C2*+V2/+V1;r.textContent=`C₁ = C₂V₂/V₁ = ${v.toFixed(5)} M`;}
+  else if(idx===1){const v=+C2*+V2/+C1;r.textContent=`V₁ = C₂V₂/C₁ = ${v.toFixed(5)} mL`;}
+  else if(idx===2){const v=+C1*+V1/+V2;r.textContent=`C₂ = C₁V₁/V₂ = ${v.toFixed(5)} M`;}
+  else{const v=+C1*+V1/+C2;r.textContent=`V₂ = C₁V₁/C₂ = ${v.toFixed(5)} mL`;}
+}
+function calcMez(){const C1=+document.getElementById('mx-C1').value,V1=+document.getElementById('mx-V1').value,C2=+document.getElementById('mx-C2').value,V2=+document.getElementById('mx-V2').value;document.getElementById('mx-r').textContent=`C = (${C1}×${V1}+${C2}×${V2})/${V1+V2} = ${((C1*V1+C2*V2)/(V1+V2)).toFixed(5)} M\nVtotal = ${V1+V2} mL`;}
+
+// ── KSP ──────────────────────────────────────────────────────
+function calcKsp(){
+  const f=document.getElementById('ksp-f').value.trim(),mode=document.getElementById('ksp-mode').value;
+  const kv=+document.getElementById('ksp-k').value,sv=+document.getElementById('ksp-s').value;
+  const r=document.getElementById('ksp-r');
+  const a=parseFx(f);const keys=Object.keys(a);
+  if(keys.length<2){r.textContent='Fórmula inválida.';return;}
+  const m=a[keys[0]],n=a[keys[1]];
+  const coeff=Math.pow(m,m)*Math.pow(n,n);
+  let out=`${f} ⇌ ${m}${keys[0]}^(${n}+) + ${n}${keys[1]}^(${m}-)\nKsp = (ms)^${m}·(ns)^${n} = ${coeff}·s^${m+n}\n\n`;
+  if(mode==='s'){if(!kv){r.textContent=out+'Ingresa Ksp.';return;}const s=Math.pow(kv/coeff,1/(m+n));out+=`s = (${kv.toExponential(3)}/${coeff})^(1/${m+n}) = ${s.toExponential(4)} mol/L`;}
+  else{if(!sv){r.textContent=out+'Ingresa s.';return;}const ksp=coeff*Math.pow(sv,m+n);out+=`Ksp = ${coeff}×(${sv.toExponential(3)})^${m+n} = ${ksp.toExponential(4)}`;}
+  r.textContent=out;
+}
+
+// ── COLIGATIVAS ──────────────────────────────────────────────
+let COL_Kf=1.86,COL_Kb=0.512,COL_P0=0.04243,COL_Msolv=18.015;
+function setCol(){const v=document.getElementById('col-s').value.split(',');[COL_Kf,COL_Kb,,,COL_P0,COL_Msolv]=[+v[0],+v[1],+v[2],+v[3],+v[4],+v[5]];}
+function calcCol(){
+  const ns=+document.getElementById('col-n').value,mkg=+document.getElementById('col-m').value,i=+document.getElementById('col-i').value||1,Tc=+document.getElementById('col-T').value||25;
+  const r=document.getElementById('col-r');
+  if(!ns||!mkg){r.textContent='Ingresa moles y kg solvente.';return;}
+  const m=ns/mkg,T=Tc+273.15;
+  const nsolv=mkg*1000/COL_Msolv,x=ns/(ns+nsolv);
+  const Vt=(mkg*1000+ns*COL_Msolv)/1000,M=ns/Vt;
+  const out=`m = ${m.toFixed(5)} mol/kg\nxSoluto = ${x.toFixed(6)}\n\n▶ ΔTf = Kf·m·i = ${COL_Kf}×${m.toFixed(4)}×${i} = ${(COL_Kf*m*i).toFixed(4)} °C\n▶ ΔTb = Kb·m·i = ${COL_Kb}×${m.toFixed(4)}×${i} = ${(COL_Kb*m*i).toFixed(4)} °C\n▶ π = iMRT = ${i}×${M.toFixed(5)}×${RJ}×${T.toFixed(2)} = ${(i*M*RJ*T/1000).toFixed(4)} kPa\n▶ ΔP/P° = x = ${x.toFixed(6)}`;
+  r.textContent=out;
+}
+
+// ── ELECTROQUÍMICA ───────────────────────────────────────────
+function calcCelda(){
+  const Ec=+document.getElementById('ec-cat').value,Ea=+document.getElementById('ec-ano').value,n=+document.getElementById('ec-n').value||2;
+  const r=document.getElementById('ec-r');
+  const E=Ec-Ea;const dG=-n*F_*E;const K=Math.exp(-dG/(RJ*298.15));
+  r.textContent=`E°celda = ${Ec} − (${Ea}) = ${E.toFixed(4)} V\nΔG° = −nFE° = ${(dG/1000).toFixed(3)} kJ/mol\nK = e^(nFE°/RT) = ${K.toExponential(4)}\n\n${E>0?'✓ CELDA ESPONTÁNEA':E<0?'✗ NO espontánea':'⇌ En equilibrio'}`;
+}
+function calcNernst(){
+  const E0=+document.getElementById('nr-E0').value,n=+document.getElementById('nr-n').value||2,Q=+document.getElementById('nr-Q').value,T=+document.getElementById('nr-T').value+273.15;
+  const r=document.getElementById('nr-r');
+  if(isNaN(E0)||!Q){r.textContent='Ingresa E°, n y Q.';return;}
+  const E=E0-(RJ*T/(n*F_))*Math.log(Q);
+  r.textContent=`E = E° − (RT/nF)·lnQ\nE = ${E0} − (${RJ}×${T.toFixed(2)})/(${n}×${F_})·ln(${Q})\nE = ${E.toFixed(5)} V\n\nA 25°C: E ≈ ${(E0-(0.05916/n)*Math.log10(Q)).toFixed(5)} V`;
+}
+function calcFar(){
+  const I=+document.getElementById('fr-I').value,t=+document.getElementById('fr-t').value,n=+document.getElementById('fr-n').value||2,M=+document.getElementById('fr-M').value;
+  const r=document.getElementById('fr-r');
+  if(!I||!t||!M){r.textContent='Ingresa I, t y M.';return;}
+  const mol=I*t/(n*F_);
+  r.textContent=`Q = I·t = ${(I*t).toExponential(4)} C\nn = Q/(nF) = ${mol.toExponential(4)} mol\nm = n·M = ${(mol*M).toExponential(4)} g`;
+}
+
+// ── CONVERSIONES ─────────────────────────────────────────────
+let _upd=false;
+function _set(ids,vals){if(_upd)return;_upd=true;ids.forEach((id,i)=>{const el=document.getElementById(id);if(el&&vals[i]!==null)el.value=+vals[i].toFixed(8);});_upd=false;}
+function cvT(from){if(_upd)return;const v=+document.getElementById('t-'+from).value;if(isNaN(v))return;let C,K,F;if(from==='c'){C=v;K=v+273.15;F=v*9/5+32;}else if(from==='k'){K=v;C=v-273.15;F=C*9/5+32;}else{F=v;C=(v-32)*5/9;K=C+273.15;}_set(['t-c','t-k','t-f'],[C,K,F]);}
+function cvP(from){if(_upd)return;const ids={atm:'p-atm',kpa:'p-kpa',mmhg:'p-mmhg',bar:'p-bar',psi:'p-psi',pa:'p-pa'};const v=+document.getElementById(ids[from]).value;if(isNaN(v))return;let a;if(from==='atm')a=v;else if(from==='kpa')a=v/101.325;else if(from==='mmhg')a=v/760;else if(from==='bar')a=v/1.01325;else if(from==='psi')a=v/14.696;else a=v/101325;_set(['p-atm','p-kpa','p-mmhg','p-bar','p-psi','p-pa'],[a,a*101.325,a*760,a*1.01325,a*14.696,a*101325]);}
+function cvE(from){if(_upd)return;const ids={j:'e-j',kj:'e-kj',cal:'e-cal',kcal:'e-kcal',ev:'e-ev',latm:'e-latm'};const v=+document.getElementById(ids[from]).value;if(isNaN(v))return;let J;if(from==='j')J=v;else if(from==='kj')J=v*1000;else if(from==='cal')J=v*4.184;else if(from==='kcal')J=v*4184;else if(from==='ev')J=v*1.60218e-19;else J=v*101.325;_set(['e-j','e-kj','e-cal','e-kcal','e-ev','e-latm'],[J,J/1000,J/4.184,J/4184,J/1.60218e-19,J/101.325]);}
+function cvM(from){if(_upd)return;const ids={g:'m-g',kg:'m-kg',mg:'m-mg',lb:'m-lb',oz:'m-oz',uma:'m-uma'};const v=+document.getElementById(ids[from]).value;if(isNaN(v))return;let g;if(from==='g')g=v;else if(from==='kg')g=v*1000;else if(from==='mg')g=v/1e3;else if(from==='lb')g=v*453.592;else if(from==='oz')g=v*28.3495;else g=v*1.66054e-24;_set(['m-g','m-kg','m-mg','m-lb','m-oz','m-uma'],[g,g/1000,g*1000,g/453.592,g/28.3495,g/1.66054e-24]);}
+function cvV(from){if(_upd)return;const ids={l:'v-l',ml:'v-ml',m3:'v-m3',cm3:'v-cm3',floz:'v-floz',gal:'v-gal'};const v=+document.getElementById(ids[from]).value;if(isNaN(v))return;let L;if(from==='l')L=v;else if(from==='ml')L=v/1000;else if(from==='m3')L=v*1000;else if(from==='cm3')L=v/1000;else if(from==='floz')L=v*0.0295735;else L=v*3.78541;_set(['v-l','v-ml','v-m3','v-cm3','v-floz','v-gal'],[L,L*1000,L/1000,L*1000,L/0.0295735,L/3.78541]);}
+
+// ── MOTOR REDOX ──────────────────────────────────────────────
+let RDXMEDIO='ac';
+function setMedio(m){
+  RDXMEDIO=m;
+  ['ac','ba','ne'].forEach(x=>document.getElementById('rm-'+x).classList.remove('active'));
+  document.getElementById('rm-'+m).classList.add('active');
+}
+function lrdx(eq){document.getElementById('rdx-in').value=eq;balancear();}
+
+// Números de oxidación conocidos para grupos poliatómicos
+const POLY={SO4:{S:6},SO3:{S:4},NO3:{N:5},NO2:{N:4},CO3:{C:4},PO4:{P:5},
+  MnO4:{Mn:7},MnO2:{Mn:4},CrO4:{Cr:6},Cr2O7:{Cr:6},
+  ClO4:{Cl:7},ClO3:{Cl:5},ClO2:{Cl:3},ClO:{Cl:1},
+  NH4:{N:-3},OH:{O:-2},CN:{C:2}};
+const FIX_OX={H:1,O:-2,F:-1,Na:1,K:1,Ca:2,Ba:2,Mg:2,Li:1,Cs:1,Rb:1,Sr:2,Zn:2,Ag:1,Al:3};
+const SPEC_FORM={'H2O2':{O:-1},'OF2':{O:2}};
+
+function getOxNums(formula,charge){
+  const clean=formula.replace(/[^A-Za-z0-9()]/g,'');
+  if(SPEC_FORM[clean])return SPEC_FORM[clean];
+  // Check poly groups
+  for(const[pg,ox]of Object.entries(POLY)){
+    if(clean===pg||clean.startsWith(pg))return ox;
+  }
+  const atoms=parseFx(clean);const syms=Object.keys(atoms);
+  // Pure element
+  if(syms.length===1&&atoms[syms[0]]>0)return{[syms[0]]:0};
+  const ox={};let unknown=null,unknownCnt=0,sumKnown=0;
+  for(const[sym,cnt]of Object.entries(atoms)){
+    if(sym==='H'){
+      // H = +1 unless with metals only
+      const metals=['Li','Na','K','Ca','Mg','Ba','Sr','Rb','Cs','Al'];
+      const others=syms.filter(s=>s!=='H');
+      ox[sym]=others.every(s=>metals.includes(s))?-1:1;
+    }else if(FIX_OX[sym]!==undefined){ox[sym]=FIX_OX[sym];}
+    else{unknown=sym;unknownCnt=cnt;}
+  }
+  if(unknown){
+    sumKnown=Object.entries(ox).reduce((s,[sym,v])=>s+v*atoms[sym],0);
+    ox[unknown]=(charge-sumKnown)/unknownCnt;
+  }
+  return ox;
+}
+
+// GCD / LCM
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){let t=b;b=a%b;a=t;}return a||1;}
+function lcm(a,b){return Math.abs(a*b)/gcd(a,b);}
+
+// Parse a side of an equation into species objects
+function parseSide_(str){
+  return str.split('+').map(t=>{
+    t=t.trim();
+    const m=t.match(/^(\d+(?:\.\d+)?)\s*(.+)$/);
+    const coef=m?+m[1]:1;const rawF=(m?m[2]:t).trim();
+    const{f,ch}=extractCharge(rawF);
+    const atoms=parseFx(f.replace(/[^A-Za-z0-9()]/g,''));
+    const ox=getOxNums(f,ch);
+    return{raw:rawF,f,ch,coef,atoms,ox};
+  });
+}
+
+// Build stoichiometry matrix (rows=elements+charge, cols=species)
+// reactants positive, products negative
+function buildMatrix(reacts,prods){
+  const elemSet=new Set();
+  [...reacts,...prods].forEach(sp=>Object.keys(sp.atoms).forEach(e=>elemSet.add(e)));
+  const elems=[...elemSet];const N=reacts.length+prods.length;
+  const rows=elems.map(el=>{
+    const row=new Array(N).fill(0);
+    reacts.forEach((sp,i)=>row[i]=(sp.atoms[el]||0));
+    prods.forEach((sp,i)=>row[reacts.length+i]=-(sp.atoms[el]||0));
+    return{el,row};
+  });
+  // Charge row
+  const chRow=new Array(N).fill(0);
+  reacts.forEach((sp,i)=>chRow[i]=sp.ch);
+  prods.forEach((sp,i)=>chRow[reacts.length+i]=-sp.ch);
+  if(chRow.some(v=>v!==0))rows.push({el:'charge',row:chRow});
+  return{rows:rows.map(r=>r.row),elems:rows.map(r=>r.el),N};
+}
+
+// Solve Ax=0 via Gaussian elimination → null space vector
+function solveNull(A,N){
+  const m=A.length;
+  let M=A.map(r=>[...r.map(v=>v)]);
+  const pivCols=[];let row=0;
+  for(let col=0;col<N&&row<m;col++){
+    let pr=-1;
+    for(let r=row;r<m;r++)if(Math.abs(M[r][col])>1e-9){pr=r;break;}
+    if(pr<0)continue;
+    [M[row],M[pr]]=[M[pr],M[row]];
+    const piv=M[row][col];
+    M[row]=M[row].map(v=>v/piv);
+    for(let r=0;r<m;r++){if(r===row)continue;const f=M[r][col];M[r]=M[r].map((v,c)=>v-f*M[row][c]);}
+    pivCols.push(col);row++;
+  }
+  const freeCols=Array.from({length:N},(_,i)=>i).filter(c=>!pivCols.includes(c));
+  if(!freeCols.length)return null;
+  const sol=new Array(N).fill(0);sol[freeCols[0]]=1;
+  pivCols.forEach((pc,ri)=>sol[pc]=-freeCols.reduce((s,fc)=>s+M[ri][fc]*sol[fc],0));
+  // Scale to integers
+  const denoms=sol.map(v=>{const f=v.toString().split('.');return f[1]?Math.pow(10,f[1].length):1;});
+  const L=denoms.reduce(lcm,1);
+  const ints=sol.map(v=>Math.round(v*L));
+  if(ints.every(v=>v<=0))return ints.map(v=>-v);
+  return ints;
+}
+
+// Grid search fallback for small systems
+function gridSearch(rows,N){
+  if(N>7)return null;
+  function check(c){return rows.every(r=>Math.abs(r.reduce((s,v,i)=>s+v*c[i],0))<0.5);}
+  function search(idx,acc){
+    if(idx===N)return check(acc)?[...acc]:null;
+    for(let v=1;v<=12;v++){acc.push(v);const r=search(idx+1,acc);if(r)return r;acc.pop();}
+    return null;
+  }
+  return search(0,[]);
+}
+
+function balancear(){
+  const raw=document.getElementById('rdx-in').value.trim();
+  const r=document.getElementById('rdx-r');
+  if(!raw){r.textContent='Ingresa una ecuación.';return;}
+  const sep=raw.includes('->')?'->':raw.includes('→')?'→':null;
+  if(!sep){r.textContent='⚠ Usa -> como flecha reactivos → productos.';return;}
+  const[lRaw,pRaw]=raw.split(sep).map(s=>s.trim());
+  let reacts=parseSide_(lRaw),prods=parseSide_(pRaw);
+
+  let out='══ BALANCEO REDOX ══\n\n';
+  out+=`Reactivos: ${reacts.map(s=>s.raw).join(' + ')}\n`;
+  out+=`Productos: ${prods.map(s=>s.raw).join(' + ')}\n\n`;
+
+  // Oxidation states
+  out+='NÚMEROS DE OXIDACIÓN:\n';
+  [...reacts,...prods].forEach(sp=>{
+    const oxStr=Object.entries(sp.ox).map(([e,v])=>`${e}:${v>=0?'+'+v:v}`).join(', ');
+    out+=`  ${sp.raw}: ${oxStr}\n`;
+  });
+
+  // Find oxidant/reductant
+  const changes=[];
+  reacts.forEach(r=>prods.forEach(p=>{
+    Object.entries(r.ox).forEach(([el,rox])=>{
+      if(p.ox[el]!==undefined&&Math.abs(p.ox[el]-rox)>=0.5){
+        changes.push({el,from:rox,to:p.ox[el],d:p.ox[el]-rox,rF:r.raw,pF:p.raw});
+      }
+    });
+  }));
+  if(changes.length){
+    out+='\nCAMBIOS DE ESTADO DE OXIDACIÓN:\n';
+    changes.forEach(c=>out+=`  ${c.el}: ${c.rF}(${c.from>=0?'+'+c.from:c.from}) → ${c.pF}(${c.to>=0?'+'+c.to:c.to})  Δ=${c.d>0?'+':''}${c.d}\n`);
+    const reds=changes.filter(c=>c.d<0),oxs=changes.filter(c=>c.d>0);
+    if(reds.length&&oxs.length){
+      const eG=Math.abs(reds[0].d),eP=Math.abs(oxs[0].d);
+      const L=lcm(eG,eP);
+      out+=`\nOxidante: ${reds[0].rF} (gana ${eG} e⁻)\nReductor: ${oxs[0].rF} (pierde ${eP} e⁻)\nMCM(${eG},${eP})=${L} → factor ox=${L/eG}, factor red=${L/eP}\n`;
+    }
+  }
+
+  // Add H2O / H+ / OH- as needed
+  out+='\nBALANCEO ALGEBRAICO:\n';
+  const allAtoms=new Set([...reacts,...prods].flatMap(sp=>Object.keys(sp.atoms)));
+  const hasO=allAtoms.has('O'),hasH=allAtoms.has('H');
+  if(hasO&&RDXMEDIO!=='ne'&&!prods.some(s=>s.f==='H2O')){prods.push(parseSide_('H2O')[0]);out+='  [Añadido H₂O a productos]\n';}
+  if(RDXMEDIO==='ac'&&!reacts.some(s=>s.f==='H+')){reacts.push(parseSide_('H+')[0]);out+='  [Añadido H⁺ a reactivos]\n';}
+  if(RDXMEDIO==='ba'&&!reacts.some(s=>s.f==='OH-')){reacts.push(parseSide_('OH-')[0]);out+='  [Añadido OH⁻ a reactivos]\n';}
+
+  const{rows,elems,N}=buildMatrix(reacts,prods);
+  const labels=[...reacts.map(s=>s.raw),...prods.map(s=>s.raw)];
+  out+=`\nVariables: ${labels.map((l,i)=>String.fromCharCode(97+i)+'='+l).join(', ')}\n`;
+
+  let coefs=solveNull(rows,N);
+  if(!coefs||coefs.some(v=>v<=0)){
+    out+='Gauss incompleto, buscando en cuadrícula...\n';
+    coefs=gridSearch(rows,N);
+  }
+  if(!coefs||coefs.some(v=>v<=0)||coefs.some(v=>isNaN(v))){
+    out+='\n⚠ No se encontró solución automática. Verifica que todos los productos estén incluidos.';
+    r.textContent=out;return;
+  }
+
+  // Simplify
+  const g=coefs.reduce((a,b)=>gcd(Math.abs(a),Math.abs(b)));
+  const fc=coefs.map(v=>Math.abs(Math.round(v/g)));
+  const rc=fc.slice(0,reacts.length),pc=fc.slice(reacts.length);
+  const lhs=reacts.map((sp,i)=>(rc[i]>1?rc[i]:'')+sp.raw).join(' + ');
+  const rhs=prods.map((sp,i)=>(pc[i]>1?pc[i]:'')+sp.raw).join(' + ');
+  out+=`\n╔══ ECUACIÓN BALANCEADA ══╗\n  ${lhs}  →  ${rhs}\n╚════════════════════════╝\n\n`;
+
+  // Verification
+  out+='VERIFICACIÓN:\n';
+  const allEl=new Set([...reacts,...prods].flatMap(sp=>Object.keys(sp.atoms)));
+  let ok=true;
+  allEl.forEach(el=>{
+    const lv=reacts.reduce((s,sp,i)=>s+(sp.atoms[el]||0)*rc[i],0);
+    const rv=prods.reduce((s,sp,i)=>s+(sp.atoms[el]||0)*pc[i],0);
+    out+=`  ${el}: ${lv}=${rv} ${lv===rv?'✓':'✗'}  `;
+    if(lv!==rv)ok=false;
+  });
+  const chL=reacts.reduce((s,sp,i)=>s+sp.ch*rc[i],0);
+  const chR=prods.reduce((s,sp,i)=>s+sp.ch*pc[i],0);
+  out+=`\n  Carga: ${chL}=${chR} ${chL===chR?'✓':'✗'}`;
+  out+=`\n\n${ok&&chL===chR?'✅ BALANCEADA CORRECTAMENTE':'⚠ Verificar manualmente'}`;
+  r.textContent=out;
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  buildPT();
+  setVdw();
+  setCol();
+  // Fix the rend-ps select - it had a bug with `sp` vs `s` variable
+  // It will be populated correctly via parseRend()
+  document.getElementById('mm-in').addEventListener('keydown',e=>{if(e.key==='Enter')calcMM();});
+  document.getElementById('rdx-in').addEventListener('keydown',e=>{if(e.key==='Enter')balancear();});
+  document.getElementById('esq-in').addEventListener('keydown',e=>{if(e.key==='Enter')parseEsq();});
+  document.getElementById('cfg-in').addEventListener('keydown',e=>{if(e.key==='Enter')calcConf();});
+  document.getElementById('nom-in').addEventListener('keydown',e=>{if(e.key==='Enter')calcNom();});
+});
+</script>
+</body>
+</html>
